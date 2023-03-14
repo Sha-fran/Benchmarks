@@ -5,4 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="elements_amount">Elements amount</string>
     <string name="start">Start</string>
+    <string name="collection_size">Collection size</string>
+    <string name="please_enter_collection_size_and_number_of_elements_to_compare">Please enter collection size and number of elements to compare</string>
+    <string name="calculate">CALCULATE</string>
 </resources>

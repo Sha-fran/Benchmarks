@@ -1,37 +1,54 @@
 package com.example.task3_benchmarks;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
+import com.example.task3_benchmarks.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
+
+    private Button buttonStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager2 viewPager2 = findViewById(R.id.view_pager2);
+        TabLayout tabLayout = binding.tabLayout;
+        ViewPager2 viewPager2 = binding.viewPager2;
+        buttonStart = binding.button2;
 
         ViewPagerAdaptor adaptor = new ViewPagerAdaptor(this);
         viewPager2.setAdapter(adaptor);
 
-        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                if (position == 0) {
-                    tab.setText("Collections");
-                } else {
-                    tab.setText("Maps");
-                }
-
+        TabLayoutMediator tabLayoutMediator= new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+            if (position == 0) {
+                tab.setText("Collections");
+            } else {
+                tab.setText("Maps");
             }
-        }).attach();
+        });
+        tabLayoutMediator.attach();
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
     }
+    public void showDialog() {
+        DialogFragment newDialogFragment = EditDataDialogFragment.newInstance();
+        newDialogFragment.show(getSupportFragmentManager(), "Edit value");
+    }
+
 }
