@@ -2,9 +2,12 @@ package com.example.task3_benchmarks;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 
@@ -16,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private Button buttonStart;
+    private TabLayoutMediator tabLayoutMediator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdaptor adaptor = new ViewPagerAdaptor(this);
         viewPager2.setAdapter(adaptor);
 
-        TabLayoutMediator tabLayoutMediator= new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+        tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
             if (position == 0) {
-                tab.setText("Collections");
+                tab.setText(getString(R.string.collections));
             } else {
-                tab.setText("Maps");
+                tab.setText(getString(R.string.maps));
             }
         });
         tabLayoutMediator.attach();
@@ -42,13 +46,13 @@ public class MainActivity extends AppCompatActivity {
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                EditDataDialogFragment.newInstance().show(getSupportFragmentManager(), EditDataDialogFragment.TAG);
             }
         });
     }
-    public void showDialog() {
-        DialogFragment newDialogFragment = EditDataDialogFragment.newInstance();
-        newDialogFragment.show(getSupportFragmentManager(), "Edit value");
-    }
 
+    public void onDestroy() {
+        super.onDestroy();
+        tabLayoutMediator.detach();
+    }
 }

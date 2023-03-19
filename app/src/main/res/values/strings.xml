@@ -8,4 +8,6 @@
     <string name="collection_size">Collection size</string>
     <string name="please_enter_collection_size_and_number_of_elements_to_compare">Please enter collection size and number of elements to compare</string>
     <string name="calculate">CALCULATE</string>
+    <string name="collections">Collections</string>
+    <string name="maps">Maps</string>
 </resources>
