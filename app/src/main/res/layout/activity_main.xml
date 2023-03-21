@@ -7,20 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/tabs"
-        app:layout_constraintWidth_percent="1"
-        app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager2">
-
-    </com.google.android.material.tabs.TabLayout>
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager2"
         android:layout_width="0dp"
@@ -31,6 +17,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHeight_percent="0"
         app:layout_constraintWidth_percent="1" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/tabs"
+            app:layout_constraintWidth_percent="1"
+            app:layout_constraintHeight_percent="0.08"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_pager2" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -49,18 +46,5 @@
             android:layout_height="match_parent"
             android:hint="@string/elements_amount" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/button2"
-        style="@style/InputLayoutStyle"
-        android:text="@string/start"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.85"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_pager2"
-        app:layout_constraintVertical_bias="0.14"
-        app:layout_constraintHeight_percent="0.095"
-        app:layout_constraintWidth_percent="0.3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class FragmentMaps extends Fragment {
+    public static String TAG = "FragmentMaps";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
