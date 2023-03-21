@@ -14,26 +14,31 @@ import android.widget.Button;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 public class FragmentCollections extends Fragment {
-//    private FragmentCollectionsBinding binding;
-//    private Button buttonStart;
+    private FragmentCollectionsBinding binding;
+    private Button buttonStart;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.fragment_collections, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        buttonStart = binding.buttonStart;
-//
-//        buttonStart.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
-//            }
-//        });
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentCollectionsBinding.inflate(inflater, container,false);
+        return binding.getRoot();
+    }
 
-//    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        buttonStart = binding.buttonStart;
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+            }
+        });
+    }
 }
