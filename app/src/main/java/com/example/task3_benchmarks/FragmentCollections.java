@@ -32,7 +32,7 @@ public class FragmentCollections extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        buttonStart = binding.buttonStart;
+        buttonStart = binding.buttonStartFragmens;
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
