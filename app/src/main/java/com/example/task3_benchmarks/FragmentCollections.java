@@ -13,7 +13,7 @@ import android.widget.Button;
 
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
-public class FragmentCollections extends Fragment {
+public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private Button buttonStart;
 
@@ -34,11 +34,11 @@ public class FragmentCollections extends Fragment {
 
         buttonStart = binding.buttonStartFragments;
 
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
-            }
-        });
+        buttonStart.setOnClickListener((View.OnClickListener) this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
     }
 }
