@@ -12,7 +12,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
-
     private TabLayoutMediator tabLayoutMediator;
 
     @Override
@@ -23,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = binding.tabLayout;
         ViewPager2 viewPager2 = binding.viewPager2;
-
 
         ViewPagerAdapter adaptor = new ViewPagerAdapter(this);
         viewPager2.setAdapter(adaptor);

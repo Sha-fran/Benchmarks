@@ -28,7 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/enter_a_number"
-            android:paddingHorizontal="10dp" />
+            android:paddingHorizontal="10dp"
+            android:inputType="phone"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
