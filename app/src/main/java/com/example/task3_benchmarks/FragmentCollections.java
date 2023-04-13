@@ -6,25 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
-    private Button buttonStart;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
-    private RecyclerView fragmentsRecyclerView;
-    private ArrayList<DataBox> textForDataBoxes = new ArrayList<>();
+    private final ArrayList<DataBox> textForDataBoxes = new ArrayList<>();
 
     private final String[] textArray = {
         "adding in the beginning of ArrayList",
@@ -65,17 +59,18 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        buttonStart = binding.buttonStartFragments;
-        buttonStart.setOnClickListener((View.OnClickListener) this);
-        fragmentsRecyclerView = binding.rvFrCollections;
-        fragmentsRecyclerView.setAdapter(adapter);
-        fragmentsRecyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+        binding.buttonStartFragments.setOnClickListener((View.OnClickListener) this);
+        binding.rvFrCollections.setAdapter(adapter);
+        binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+        textBoxesCreation();
+        adapter.setTextForDataBoxes(textForDataBoxes);
+    }
 
+    public void textBoxesCreation() {
         for (int i = 0; i < 21; i++) {
             DataBox dataBox = new DataBox(i, textArray[i]);
             textForDataBoxes.add(dataBox);
         }
-        adapter.setTextForDataBoxes(textForDataBoxes);
     }
 
     @Override
