@@ -34,4 +34,10 @@
     <string name="removing_in_the_beginning_of_copyrightableList">removing in the beginning of CopyOnWriteArrayList</string>
     <string name="removing_in_the_middle_of_copyrightableList">removing in the middle of CopyOnWriteArrayList</string>
     <string name="removing_in_the_end_of_copyrightableList">removing in the end of CopyOnWriteArrayList</string>
+    <string name="adding_new_in_treemap">adding new in TreeMap</string>
+    <string name="search_by_key_in_treemap">search by key in TreeMap</string>
+    <string name="removing_from_treemap">removing from TreeMap</string>
+    <string name="adding_new_in_hashmap">adding new in HashMap</string>
+    <string name="search_by_key_in_hashmap">search by key in HashMap</string>
+    <string name="removing_from_hashmap">removing from HashMap</string>
 </resources>

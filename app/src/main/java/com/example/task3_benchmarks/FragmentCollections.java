@@ -15,7 +15,6 @@ import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
@@ -36,15 +35,15 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonStartFragments.setOnClickListener(this);
+        binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setTextForDataBoxes((ArrayList<DataBox>) createBenchmarksList());
+        adapter.setTextForDataBoxes((ArrayList<DataBox>) createBenchmarksListCollections());
     }
 
-    private List<DataBox> createBenchmarksList() {
+    private List<DataBox> createBenchmarksListCollections() {
         final List<DataBox> list = new ArrayList<>();
-        final String[] textArray = {
+        final String[] textArrayCollections = {
             requireActivity().getString(R.string.adding_in_the_beginning_of_arrayList),
             requireActivity().getString(R.string.adding_in_the_middle_of_arrayList),
             requireActivity().getString(R.string.adding_in_the_end_of_arrayList),
@@ -68,8 +67,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             requireActivity().getString(R.string.removing_in_the_end_of_copyrightableList)
         };
 
-        for (int i = 0; i < 21; i++) {
-            DataBox dataBox = new DataBox(i, textArray[i]);
+        for (int i = 0; i < textArrayCollections.length; i++) {
+            DataBox dataBox = new DataBox(i, textArrayCollections[i]);
             list.add(dataBox);
         }
         return list;
