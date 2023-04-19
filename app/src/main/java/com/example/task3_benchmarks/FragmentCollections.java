@@ -14,35 +14,12 @@ import android.view.ViewGroup;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
-    private final ArrayList<DataBox> textForDataBoxes = new ArrayList<>();
-
-    private final String[] textArray = {
-        "adding in the beginning of ArrayList",
-        "adding in the middle of ArrayList",
-        "adding in the end of ArrayList",
-        "search by value from ArrayList",
-        "removing in the beginning of ArrayList",
-        "removing in the middle of ArrayList",
-        "removing in the end of ArrayList",
-        "adding in the beginning of LinkedList",
-        "adding in the middle of LinkedList",
-        "adding in the end of LinkedList",
-        "search by value from LinkedList",
-        "removing in the beginning of LinkedList",
-        "removing in the middle of LinkedList",
-        "removing in the end of LinkedList",
-        "adding in the beginning of CopyOnWriteArrayList",
-        "adding in the middle of CopyOnWriteArrayList",
-        "adding in the end of CopyOnWriteArrayList",
-        "search by value from CopyOnWriteArrayList",
-        "removing in the beginning of CopyOnWriteArrayList",
-        "removing in the middle of CopyOnWriteArrayList",
-        "removing in the end of CopyOnWriteArrayList"
-    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,18 +36,43 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonStartFragments.setOnClickListener((View.OnClickListener) this);
+        binding.buttonStartFragments.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        textBoxesCreation();
-        adapter.setTextForDataBoxes(textForDataBoxes);
+        adapter.setTextForDataBoxes((ArrayList<DataBox>) createBenchmarksList());
     }
 
-    public void textBoxesCreation() {
+    private List<DataBox> createBenchmarksList() {
+        final List<DataBox> list = new ArrayList<>();
+        final String[] textArray = {
+            requireActivity().getString(R.string.adding_in_the_beginning_of_arrayList),
+            requireActivity().getString(R.string.adding_in_the_middle_of_arrayList),
+            requireActivity().getString(R.string.adding_in_the_end_of_arrayList),
+            requireActivity().getString(R.string.search_by_value_from_arrayList),
+            requireActivity().getString(R.string.removing_in_the_beginning_of_arrayList),
+            requireActivity().getString(R.string.removing_in_the_middle_of_arrayList),
+            requireActivity().getString(R.string.removing_in_the_end_of_ArrayList),
+            requireActivity().getString(R.string.adding_in_the_beginning_of_linkedList),
+            requireActivity().getString(R.string.adding_in_the_middle_of_linkedList),
+            requireActivity().getString(R.string.adding_in_the_end_of_linkedList),
+            requireActivity().getString(R.string.search_by_value_from_linkedList),
+            requireActivity().getString(R.string.removing_in_the_beginning_of_linked_list),
+            requireActivity().getString(R.string.removing_in_the_middle_of_linked_list),
+            requireActivity().getString(R.string.removing_in_the_end_of_linked_list),
+            requireActivity().getString(R.string.adding_in_the_beginning_of_copyrightableList),
+            requireActivity().getString(R.string.adding_in_the_middle_of_copyrightableList),
+            requireActivity().getString(R.string.adding_in_the_end_of_copyrightableList),
+            requireActivity().getString(R.string.search_by_value_from_copyrightableList),
+            requireActivity().getString(R.string.removing_in_the_beginning_of_copyrightableList),
+            requireActivity().getString(R.string.removing_in_the_middle_of_copyrightableList),
+            requireActivity().getString(R.string.removing_in_the_end_of_copyrightableList)
+        };
+
         for (int i = 0; i < 21; i++) {
             DataBox dataBox = new DataBox(i, textArray[i]);
-            textForDataBoxes.add(dataBox);
+            list.add(dataBox);
         }
+        return list;
     }
 
     @Override

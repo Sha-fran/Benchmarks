@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adaptor = new ViewPagerAdapter(this);
         viewPager2.setAdapter(adaptor);
 
-
         tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
 
             if (position == 0) {

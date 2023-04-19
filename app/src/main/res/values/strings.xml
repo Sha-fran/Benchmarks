@@ -11,4 +11,27 @@
     <string name="collections">Collections</string>
     <string name="maps">Maps</string>
     <string name="enter_a_number">Enter a number</string>
+
+
+    <string name="adding_in_the_beginning_of_arrayList">adding in the beginning of ArrayList</string>
+    <string name="adding_in_the_middle_of_arrayList">adding in the middle of ArrayList</string>
+    <string name="adding_in_the_end_of_arrayList">adding in the end of ArrayList</string>
+    <string name="search_by_value_from_arrayList">search by value from ArrayList</string>
+    <string name="removing_in_the_beginning_of_arrayList">removing in the beginning of ArrayList</string>
+    <string name="removing_in_the_middle_of_arrayList">removing in the middle of ArrayList</string>
+    <string name="removing_in_the_end_of_ArrayList">removing in the end of ArrayList</string>
+    <string name="adding_in_the_beginning_of_linkedList">adding in the beginning of LinkedList</string>
+    <string name="adding_in_the_middle_of_linkedList">adding in the middle of LinkedList</string>
+    <string name="adding_in_the_end_of_linkedList">adding in the end of LinkedList</string>
+    <string name="search_by_value_from_linkedList">search by value from LinkedList</string>
+    <string name="removing_in_the_beginning_of_linked_list">removing in the beginning of LinkedList</string>
+    <string name="removing_in_the_middle_of_linked_list">removing in the middle of LinkedList</string>
+    <string name="removing_in_the_end_of_linked_list">removing in the end of LinkedList</string>
+    <string name="adding_in_the_beginning_of_copyrightableList">adding in the beginning of CopyOnWriteArrayList</string>
+    <string name="adding_in_the_middle_of_copyrightableList">adding in the middle of CopyOnWriteArrayList</string>
+    <string name="adding_in_the_end_of_copyrightableList">adding in the end of CopyOnWriteArrayList</string>
+    <string name="search_by_value_from_copyrightableList">search by value from CopyOnWriteArrayList</string>
+    <string name="removing_in_the_beginning_of_copyrightableList">removing in the beginning of CopyOnWriteArrayList</string>
+    <string name="removing_in_the_middle_of_copyrightableList">removing in the middle of CopyOnWriteArrayList</string>
+    <string name="removing_in_the_end_of_copyrightableList">removing in the end of CopyOnWriteArrayList</string>
 </resources>
