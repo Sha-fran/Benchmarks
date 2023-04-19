@@ -38,33 +38,33 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setTextForDataBoxes((ArrayList<DataBox>) createBenchmarksListCollections());
+        adapter.setTextForDataBoxes( createBenchmarksListCollections());
     }
 
-    private List<DataBox> createBenchmarksListCollections() {
-        final List<DataBox> list = new ArrayList<>();
+    private ArrayList<DataBox> createBenchmarksListCollections() {
+        final ArrayList<DataBox> list = new ArrayList<>();
         final String[] textArrayCollections = {
-            requireActivity().getString(R.string.adding_in_the_beginning_of_arrayList),
-            requireActivity().getString(R.string.adding_in_the_middle_of_arrayList),
-            requireActivity().getString(R.string.adding_in_the_end_of_arrayList),
-            requireActivity().getString(R.string.search_by_value_from_arrayList),
-            requireActivity().getString(R.string.removing_in_the_beginning_of_arrayList),
-            requireActivity().getString(R.string.removing_in_the_middle_of_arrayList),
-            requireActivity().getString(R.string.removing_in_the_end_of_ArrayList),
-            requireActivity().getString(R.string.adding_in_the_beginning_of_linkedList),
-            requireActivity().getString(R.string.adding_in_the_middle_of_linkedList),
-            requireActivity().getString(R.string.adding_in_the_end_of_linkedList),
-            requireActivity().getString(R.string.search_by_value_from_linkedList),
-            requireActivity().getString(R.string.removing_in_the_beginning_of_linked_list),
-            requireActivity().getString(R.string.removing_in_the_middle_of_linked_list),
-            requireActivity().getString(R.string.removing_in_the_end_of_linked_list),
-            requireActivity().getString(R.string.adding_in_the_beginning_of_copyrightableList),
-            requireActivity().getString(R.string.adding_in_the_middle_of_copyrightableList),
-            requireActivity().getString(R.string.adding_in_the_end_of_copyrightableList),
-            requireActivity().getString(R.string.search_by_value_from_copyrightableList),
-            requireActivity().getString(R.string.removing_in_the_beginning_of_copyrightableList),
-            requireActivity().getString(R.string.removing_in_the_middle_of_copyrightableList),
-            requireActivity().getString(R.string.removing_in_the_end_of_copyrightableList)
+            getString(R.string.adding_in_the_beginning_of_arrayList),
+            getString(R.string.adding_in_the_middle_of_arrayList),
+            getString(R.string.adding_in_the_end_of_arrayList),
+            getString(R.string.search_by_value_from_arrayList),
+            getString(R.string.removing_in_the_beginning_of_arrayList),
+            getString(R.string.removing_in_the_middle_of_arrayList),
+            getString(R.string.removing_in_the_end_of_ArrayList),
+            getString(R.string.adding_in_the_beginning_of_linkedList),
+            getString(R.string.adding_in_the_middle_of_linkedList),
+            getString(R.string.adding_in_the_end_of_linkedList),
+            getString(R.string.search_by_value_from_linkedList),
+            getString(R.string.removing_in_the_beginning_of_linked_list),
+            getString(R.string.removing_in_the_middle_of_linked_list),
+            getString(R.string.removing_in_the_end_of_linked_list),
+            getString(R.string.adding_in_the_beginning_of_copyrightableList),
+            getString(R.string.adding_in_the_middle_of_copyrightableList),
+            getString(R.string.adding_in_the_end_of_copyrightableList),
+            getString(R.string.search_by_value_from_copyrightableList),
+            getString(R.string.removing_in_the_beginning_of_copyrightableList),
+            getString(R.string.removing_in_the_middle_of_copyrightableList),
+            getString(R.string.removing_in_the_end_of_copyrightableList)
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {

@@ -12,13 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.task3_benchmarks.databinding.FragmentMapsBinding;
+import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentMaps extends Fragment implements View.OnClickListener {
-    private FragmentMapsBinding binding;
+    private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
 
     @Override
@@ -28,7 +28,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentMapsBinding.inflate(inflater, container, false);
+        binding = FragmentCollectionsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -36,22 +36,22 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonStartFragmentsMaps.setOnClickListener(this);
-        binding.rvFrMaps.setAdapter(adapter);
-        binding.rvFrMaps.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setTextForDataBoxes((ArrayList<DataBox>) createBenchmarksListMaps());
+        binding.buttonStartFragmentsCollections.setOnClickListener(this);
+        binding.rvFrCollections.setAdapter(adapter);
+        binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
+        adapter.setTextForDataBoxes(createBenchmarksListMaps());
     }
 
-    private List<DataBox> createBenchmarksListMaps() {
-        final List<DataBox> list = new ArrayList<>();
+    private ArrayList<DataBox> createBenchmarksListMaps() {
+        final ArrayList<DataBox> list = new ArrayList<>();
 
         final String[] textArrayMaps = {
-                requireActivity().getString(R.string.adding_new_in_treemap),
-                requireActivity().getString(R.string.search_by_key_in_treemap),
-                requireActivity().getString(R.string.removing_from_treemap),
-                requireActivity().getString(R.string.adding_new_in_hashmap),
-                requireActivity().getString(R.string.search_by_key_in_hashmap),
-                requireActivity().getString(R.string.removing_from_hashmap)
+                getString(R.string.adding_new_in_treemap),
+                getString(R.string.search_by_key_in_treemap),
+                getString(R.string.removing_from_treemap),
+                getString(R.string.adding_new_in_hashmap),
+                getString(R.string.search_by_key_in_hashmap),
+                getString(R.string.removing_from_hashmap)
         };
 
         for (int i = 0; i < textArrayMaps.length; i++) {
