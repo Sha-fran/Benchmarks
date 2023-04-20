@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.view.LayoutInflater;
@@ -19,10 +20,17 @@ import java.util.List;
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
+    private Integer amountOfOperations;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getParentFragmentManager().setFragmentResultListener("Enter amount of operations", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                amountOfOperations = bundle.getInt("Result of amount of operations");
+            }
+        });
     }
 
     @Override
