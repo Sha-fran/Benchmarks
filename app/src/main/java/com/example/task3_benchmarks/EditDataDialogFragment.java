@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +16,8 @@ import com.example.task3_benchmarks.databinding.FragmentEditDataDialogBinding;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class EditDataDialogFragment extends DialogFragment implements TextWatcher {
+    public static final String ENTER_AMOUNT_OF_OPERATIONS = "Enter amount of operations";
+    public static final String RESULT_OF_AMOUNT_OF_OPERATIONS = "Result of amount of operations";
     public static final String TAG = "Edit Data";
     private FragmentEditDataDialogBinding binding;
     private int amountOfOperations;
@@ -39,8 +40,8 @@ public class EditDataDialogFragment extends DialogFragment implements TextWatche
             @Override
             public void onClick(View view) {
                 Bundle result = new Bundle();
-                result.putInt("Result of amount of operations", amountOfOperations);
-                getParentFragmentManager().setFragmentResult("Enter amount of operations", result);
+                result.putInt(RESULT_OF_AMOUNT_OF_OPERATIONS, amountOfOperations);
+                getParentFragmentManager().setFragmentResult(ENTER_AMOUNT_OF_OPERATIONS, result);
             }
         });
     }
