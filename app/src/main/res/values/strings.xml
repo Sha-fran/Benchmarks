@@ -40,4 +40,5 @@
     <string name="adding_new_in_hashmap">adding new in HashMap</string>
     <string name="search_by_key_in_hashmap">search by key in HashMap</string>
     <string name="removing_from_hashmap">removing from HashMap</string>
+    <string name="error_you_need_enter_elements_count">Error. You need enter elements count!</string>
 </resources>

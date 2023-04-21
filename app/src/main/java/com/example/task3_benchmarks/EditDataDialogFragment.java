@@ -7,10 +7,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.task3_benchmarks.databinding.FragmentEditDataDialogBinding;
 import com.google.android.material.textfield.TextInputEditText;
@@ -35,6 +37,7 @@ public class EditDataDialogFragment extends DialogFragment implements TextWatche
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.enterANumber.addTextChangedListener(this);
 
         binding.buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,9 +56,13 @@ public class EditDataDialogFragment extends DialogFragment implements TextWatche
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        amountOfOperations = Integer.parseInt(textAmountOfOperations.getText().toString());
-    }
+        if (TextUtils.isDigitsOnly(textAmountOfOperations.getText().toString())) {
+            amountOfOperations = Integer.parseInt(textAmountOfOperations.getText().toString());
+        } else {
+            textAmountOfOperations.setError(getString(R.string.error_you_need_enter_elements_count));
+        }
 
+    }
     @Override
     public void afterTextChanged(Editable editable) {
 

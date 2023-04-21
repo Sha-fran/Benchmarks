@@ -28,7 +28,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentCollectionsBinding.inflate(inflater, container,false);
+        binding = FragmentCollectionsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -39,7 +39,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setTextForDataBoxes( createBenchmarksListCollections());
+        adapter.setTextForDataBoxes(createBenchmarksListCollections());
 
         getParentFragmentManager().setFragmentResultListener("Enter amount of operations", this, new FragmentResultListener() {
             @Override
@@ -52,27 +52,27 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private ArrayList<DataBox> createBenchmarksListCollections() {
         final ArrayList<DataBox> list = new ArrayList<>();
         final int[] textArrayCollections = {
-            R.string.adding_in_the_beginning_of_arrayList,
-            R.string.adding_in_the_middle_of_arrayList,
-            R.string.adding_in_the_end_of_arrayList,
-            R.string.search_by_value_from_arrayList,
-            R.string.removing_in_the_beginning_of_arrayList,
-            R.string.removing_in_the_middle_of_arrayList,
-            R.string.removing_in_the_end_of_ArrayList,
-            R.string.adding_in_the_beginning_of_linkedList,
-            R.string.adding_in_the_middle_of_linkedList,
-            R.string.adding_in_the_end_of_linkedList,
-            R.string.search_by_value_from_linkedList,
-            R.string.removing_in_the_beginning_of_linked_list,
-            R.string.removing_in_the_middle_of_linked_list,
-            R.string.removing_in_the_end_of_linked_list,
-            R.string.adding_in_the_beginning_of_copyrightableList,
-            R.string.adding_in_the_middle_of_copyrightableList,
-            R.string.adding_in_the_end_of_copyrightableList,
-            R.string.search_by_value_from_copyrightableList,
-            R.string.removing_in_the_beginning_of_copyrightableList,
-            R.string.removing_in_the_middle_of_copyrightableList,
-            R.string.removing_in_the_end_of_copyrightableList
+                R.string.adding_in_the_beginning_of_arrayList,
+                R.string.adding_in_the_middle_of_arrayList,
+                R.string.adding_in_the_end_of_arrayList,
+                R.string.search_by_value_from_arrayList,
+                R.string.removing_in_the_beginning_of_arrayList,
+                R.string.removing_in_the_middle_of_arrayList,
+                R.string.removing_in_the_end_of_ArrayList,
+                R.string.adding_in_the_beginning_of_linkedList,
+                R.string.adding_in_the_middle_of_linkedList,
+                R.string.adding_in_the_end_of_linkedList,
+                R.string.search_by_value_from_linkedList,
+                R.string.removing_in_the_beginning_of_linked_list,
+                R.string.removing_in_the_middle_of_linked_list,
+                R.string.removing_in_the_end_of_linked_list,
+                R.string.adding_in_the_beginning_of_copyrightableList,
+                R.string.adding_in_the_middle_of_copyrightableList,
+                R.string.adding_in_the_end_of_copyrightableList,
+                R.string.search_by_value_from_copyrightableList,
+                R.string.removing_in_the_beginning_of_copyrightableList,
+                R.string.removing_in_the_middle_of_copyrightableList,
+                R.string.removing_in_the_end_of_copyrightableList
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
