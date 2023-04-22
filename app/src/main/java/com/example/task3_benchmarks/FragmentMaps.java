@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentMaps extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
@@ -39,7 +37,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter.setTextForDataBoxes(createBenchmarksListMaps());
+        adapter.setItems(createBenchmarksListMaps());
     }
 
     private ArrayList<DataBox> createBenchmarksListMaps() {

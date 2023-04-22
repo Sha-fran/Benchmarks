@@ -1,5 +1,8 @@
 package com.example.task3_benchmarks;
 
+import static com.example.task3_benchmarks.EditDataDialogFragment.ENTER_AMOUNT_OF_OPERATIONS;
+import static com.example.task3_benchmarks.EditDataDialogFragment.RESULT_OF_AMOUNT_OF_OPERATIONS;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,7 +18,6 @@ import android.view.ViewGroup;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
@@ -39,12 +41,12 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setTextForDataBoxes(createBenchmarksListCollections());
+        adapter.setItems(createBenchmarksListCollections());
 
-        getParentFragmentManager().setFragmentResultListener("Enter amount of operations", this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                bundle.getInt("Result of amount of operations");
+                bundle.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
             }
         });
     }

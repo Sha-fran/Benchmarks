@@ -9,13 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.task3_benchmarks.databinding.DataBoxItemBinding;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.BenchmarksViewHolder> {
 
-    private ArrayList<DataBox> textForDataBoxes = new ArrayList<>();
+    private final List<DataBox> items = new ArrayList<>();
 
-    public void setTextForDataBoxes(ArrayList<DataBox> textForDataBoxes) {
-        this.textForDataBoxes = textForDataBoxes;
+    public void setItems(List items) {
+        this.items.addAll(items);
     }
 
     @NonNull
@@ -29,22 +31,26 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
 
     @Override
     public void onBindViewHolder(@NonNull BenchmarksViewHolder holder, int position) {
-        DataBox dataBox = textForDataBoxes.get(position);
-        holder.binding.dataBoxView.setText(dataBox.getText());
+        DataBox dataBox = items.get(position);
+        BenchmarksViewHolder.bind(dataBox);
+
     }
 
     @Override
     public int getItemCount() {
-        return textForDataBoxes.size();
+        return items.size();
     }
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
 
-        private final DataBoxItemBinding binding;
+        private static DataBoxItemBinding binding = null;
 
         private BenchmarksViewHolder(DataBoxItemBinding binding) {
             super(binding.getRoot());
-            this.binding = binding;
+            BenchmarksViewHolder.binding = binding;
+        }
+        static void bind(DataBox item) {
+            binding.dataBoxView.setText(item.getText());
         }
     }
 }
