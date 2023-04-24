@@ -23,7 +23,6 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     @NonNull
     @Override
     public BenchmarksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         DataBoxItemBinding binding = DataBoxItemBinding.inflate(inflater, parent, false);
         return new BenchmarksViewHolder(binding);
@@ -32,7 +31,7 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     @Override
     public void onBindViewHolder(@NonNull BenchmarksViewHolder holder, int position) {
         DataBox dataBox = items.get(position);
-        BenchmarksViewHolder.bind(dataBox);
+        holder.bind(dataBox);
 
     }
 
@@ -42,14 +41,13 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     }
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
-
-        private static DataBoxItemBinding binding = null;
+        private final DataBoxItemBinding binding;
 
         private BenchmarksViewHolder(DataBoxItemBinding binding) {
             super(binding.getRoot());
-            BenchmarksViewHolder.binding = binding;
+            this.binding = binding;
         }
-        static void bind(DataBox item) {
+        void bind(DataBox item) {
             binding.dataBoxView.setText(item.getText());
         }
     }
