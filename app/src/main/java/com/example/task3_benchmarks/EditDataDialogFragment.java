@@ -6,16 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.example.task3_benchmarks.databinding.FragmentEditDataDialogBinding;
-import com.google.android.material.textfield.TextInputEditText;
 
 public class EditDataDialogFragment extends DialogFragment implements View.OnClickListener {
     public static final String ENTER_AMOUNT_OF_OPERATIONS = "Enter amount of operations";
@@ -37,20 +33,49 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.buttonCalculate.setOnClickListener((View.OnClickListener) this);
+        binding.buttonCalculate.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        if (TextUtils.isDigitsOnly(binding.enterANumber.getText().toString()) && binding.enterANumber.getText().toString().charAt(0) != '0') {
-            amountOfOperations = Integer.parseInt(binding.enterANumber.getText().toString());
+        String enteredAmountOfOperations = binding.enterANumber.getText().toString();
+
+        if(enteredAmountOfOperations.isEmpty()) {
+            binding.enterANumber.setError(getString(R.string.imput_is_empty_please));
+        } else if (checkDigitSymbols(enteredAmountOfOperations)) {
+            binding.enterANumber.setError(getString(R.string.you_need_enter_digit_symbols_only));
+        } else if (Integer.parseInt(enteredAmountOfOperations) == 0) {
+            binding.enterANumber.setError(getString(R.string.please_enter_amount_of_operations_0));
+        } else if (Integer.parseInt(enteredAmountOfOperations) < 0) {
+            binding.enterANumber.setError(getString(R.string.please_enter_amount_0));
+        } else {
+            amountOfOperations = Integer.parseInt(checkFirsZeroes(enteredAmountOfOperations));
             Bundle result = new Bundle();
             result.putInt(RESULT_OF_AMOUNT_OF_OPERATIONS, amountOfOperations);
             getParentFragmentManager().setFragmentResult(ENTER_AMOUNT_OF_OPERATIONS, result);
             dismiss();
-        } else {
-            binding.enterANumber.setError(getString(R.string.error_you_need_enter_elements_count));
         }
+    }
+
+    public boolean checkDigitSymbols(String amountOfOperations) {
+        for ( int i = 0; i < amountOfOperations.length(); i++ ) {
+            if (!Character.isLetter(amountOfOperations.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String checkFirsZeroes(String numberOfOperations) {
+        for(int i = 0; i < numberOfOperations.length(); i++) {
+            if(numberOfOperations.charAt(i) == '0') {
+                numberOfOperations = numberOfOperations.substring(i+1);
+                i -= 1;
+            } else {
+                return numberOfOperations;
+            }
+        }
+        return numberOfOperations;
     }
 
     @Override
