@@ -43,6 +43,5 @@
     <string name="error_you_need_enter_elements_count">Error. You need enter elements count!</string>
     <string name="imput_is_empty_please">"Imput is empty. Please enter amount of operations"</string>
     <string name="please_enter_amount_of_operations_0"><![CDATA[Please, enter amount of operations > 0]]></string>
-    <string name="please_enter_amount_0"><![CDATA[Please, enter amount > 0]]></string>
     <string name="you_need_enter_digit_symbols_only">You need enter digit symbols only!</string>
 </resources>
