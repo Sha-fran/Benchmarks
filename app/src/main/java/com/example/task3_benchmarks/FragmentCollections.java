@@ -79,7 +79,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(i, getResources().getString(textArrayCollections[i]));
+            DataBox dataBox = new DataBox(i, textArrayCollections[i]);
             list.add(dataBox);
         }
         return list;

@@ -43,13 +43,13 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
     private ArrayList<DataBox> createBenchmarksListMaps() {
         final ArrayList<DataBox> list = new ArrayList<>();
 
-        final String[] textArrayMaps = {
-                getString(R.string.adding_new_in_treemap),
-                getString(R.string.search_by_key_in_treemap),
-                getString(R.string.removing_from_treemap),
-                getString(R.string.adding_new_in_hashmap),
-                getString(R.string.search_by_key_in_hashmap),
-                getString(R.string.removing_from_hashmap)
+        final int[] textArrayMaps = {
+                R.string.adding_new_in_treemap,
+                R.string.search_by_key_in_treemap,
+                R.string.removing_from_treemap,
+                R.string.adding_new_in_hashmap,
+                R.string.search_by_key_in_hashmap,
+                R.string.removing_from_hashmap
         };
 
         for (int i = 0; i < textArrayMaps.length; i++) {

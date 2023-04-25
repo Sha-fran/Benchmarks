@@ -71,6 +71,4 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
         super.onDestroy();
         binding = null;
     }
-
-
 }

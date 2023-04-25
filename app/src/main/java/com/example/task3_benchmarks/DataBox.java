@@ -4,9 +4,9 @@ public class DataBox {
 
 
     private int id;
-    private String text;
+    private int text;
 
-    public DataBox( int id, String text) {
+    public DataBox( int id, int text) {
         this.id = id;
         this.text = text;
     }
@@ -15,7 +15,7 @@ public class DataBox {
         return id;
     }
 
-    public String getText() {
+    public int getText() {
         return text;
     }
 }
