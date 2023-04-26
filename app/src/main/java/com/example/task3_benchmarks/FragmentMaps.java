@@ -1,10 +1,14 @@
 package com.example.task3_benchmarks;
 
+import static com.example.task3_benchmarks.EditDataDialogFragment.ENTER_AMOUNT_OF_OPERATIONS;
+import static com.example.task3_benchmarks.EditDataDialogFragment.RESULT_OF_AMOUNT_OF_OPERATIONS;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.view.LayoutInflater;
@@ -18,11 +22,19 @@ import java.util.ArrayList;
 public class FragmentMaps extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
+    private int amountOfOperations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
+                binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
+            }
+        });
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

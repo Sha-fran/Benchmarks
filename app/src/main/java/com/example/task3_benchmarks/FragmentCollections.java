@@ -23,10 +23,19 @@ import java.util.List;
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
+    private int amountOfOperations;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
+                binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
+            }
+        });
+
     }
 
     @Override
@@ -42,17 +51,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setItems(createBenchmarksList());
-
-        getParentFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                bundle.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
-            }
-        });
+        adapter.setItems(createBenchmarksListCollections());
     }
 
-    private List<DataBox> createBenchmarksList() {
+    private List<DataBox> createBenchmarksListCollections() {
         final ArrayList<DataBox> list = new ArrayList<>();
         final int[] textArrayCollections = {
                 R.string.adding_in_the_beginning_of_arrayList,
