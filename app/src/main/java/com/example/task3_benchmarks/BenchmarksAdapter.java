@@ -19,7 +19,6 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     public void setItems(List items) {
         this.items.addAll(items);
     }
-
     @NonNull
     @Override
     public BenchmarksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,7 +47,7 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
             this.binding = binding;
         }
         void bind(DataBox item) {
-            binding.dataBoxView.setText(item.getText());
+            binding.dataBoxView.setText((int) item.getText());
         }
     }
 }

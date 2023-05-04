@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,12 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private int amountOfOperations;
+    private long startTime, resultTime;
+    private char charToAction = 'a';
+    private List<Character> arrayList = new ArrayList<>();
+    private List<DataBox> listOfDataBoxes = createBenchmarksListCollections();
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,11 +39,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
-                binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
+                handleFragmentResult(requestKey, result);
             }
         });
-
     }
 
     @Override
@@ -51,7 +57,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setItems(createBenchmarksListCollections());
+        adapter.setItems(listOfDataBoxes);
     }
 
     private List<DataBox> createBenchmarksListCollections() {
@@ -90,5 +96,33 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+    }
+
+    public void handleFragmentResult(String requestKey, Bundle result) {
+        amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
+        binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
+        startTime = System.currentTimeMillis();
+        actionsWithCollections();
+    }
+
+    public void actionsWithCollections() {
+        Thread threadAddingInTheBeginningOfArrayList = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < amountOfOperations; i++) {
+                    arrayList.add(i, charToAction);
+                }
+                long resultTime = System.currentTimeMillis() - startTime;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        DataBox dataBox = new DataBox(0, (int) resultTime);
+                        listOfDataBoxes.set(0, dataBox);
+                        adapter.setItems(listOfDataBoxes);
+                    }
+                });
+            }
+        });
+        threadAddingInTheBeginningOfArrayList.start();
     }
 }

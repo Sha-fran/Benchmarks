@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.example.task3_benchmarks.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -13,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private TabLayoutMediator tabLayoutMediator;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
