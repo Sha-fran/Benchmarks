@@ -61,7 +61,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     private List<DataBox> createBenchmarksListCollections() {
-        final ArrayList<DataBox> list = new ArrayList<>();
+        List<DataBox> list = new ArrayList<>();
         final int[] textArrayCollections = {
                 R.string.adding_in_the_beginning_of_arrayList,
                 R.string.adding_in_the_middle_of_arrayList,
@@ -87,7 +87,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(i, textArrayCollections[i]);
+            DataBox dataBox = new DataBox(textArrayCollections[i], null);
             list.add(dataBox);
         }
         return list;
@@ -102,10 +102,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
         binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
         startTime = System.currentTimeMillis();
-        actionsWithCollections();
-    }
 
-    public void actionsWithCollections() {
         Thread threadAddingInTheBeginningOfArrayList = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -116,13 +113,18 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        DataBox dataBox = new DataBox(0, (int) resultTime);
-                        listOfDataBoxes.set(0, dataBox);
-                        adapter.setItems(listOfDataBoxes);
+                        actionsWithCollections(resultTime);
                     }
                 });
             }
         });
         threadAddingInTheBeginningOfArrayList.start();
+    }
+
+    public void actionsWithCollections(long resultTime) {
+
+        DataBox dataBox = new DataBox(0 ,Integer.toString((int) resultTime) );
+        listOfDataBoxes.set(0, dataBox);
+        adapter.setItems(listOfDataBoxes);
     }
 }

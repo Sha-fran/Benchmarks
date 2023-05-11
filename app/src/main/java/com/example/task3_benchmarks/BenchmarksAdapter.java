@@ -9,16 +9,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.task3_benchmarks.databinding.DataBoxItemBinding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.BenchmarksViewHolder> {
 
-    private final List<DataBox> items = new ArrayList<>();
+    private List<DataBox> items = new ArrayList<>();
 
-    public void setItems(List items) {
-        this.items.addAll(items);
+    public void setItems(List <DataBox> items) {
+        this.items = items;
+        notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public BenchmarksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +48,11 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
             this.binding = binding;
         }
         void bind(DataBox item) {
-            binding.dataBoxView.setText((int) item.getText());
+            if (item.getTime() == null) {
+                binding.dataBoxView.setText(item.getText());
+            } else {
+                binding.dataBoxView.setText(item.getTime());
+            }
         }
     }
 }

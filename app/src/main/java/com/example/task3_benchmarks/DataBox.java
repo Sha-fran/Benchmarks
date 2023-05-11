@@ -2,20 +2,19 @@ package com.example.task3_benchmarks;
 
 public class DataBox {
 
-
-    private int id;
     private int text;
+    private String time;
 
-    public DataBox( int id, int text) {
-        this.id = id;
+    public DataBox(int text, String time) {
         this.text = text;
-    }
-
-    public int getId() {
-        return id;
+        this.time = time;
     }
 
     public int getText() {
         return text;
+    }
+
+    public String getTime() {
+        return time;
     }
 }
