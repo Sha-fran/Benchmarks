@@ -48,11 +48,12 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
             this.binding = binding;
         }
         void bind(DataBox item) {
-            if (item.getTime() == null) {
-                binding.dataBoxView.setText(item.getText());
+            if (item.time == 0) {
+                binding.dataBoxView.setText(item.text);
             } else {
-                binding.dataBoxView.setText(item.getTime());
+                binding.dataBoxView.setText(String.valueOf(item.time));
             }
         }
     }
 }
+
