@@ -128,3 +128,4 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         adapter.setItems(listOfDataBoxes);
     }
 }
+
