@@ -20,15 +20,15 @@ import android.view.ViewGroup;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
     private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private int amountOfOperations;
-    private long startTime, resultTime;
+    private long startTime;
     private char charToAction = 'a';
-    private List<Character> arrayList = new ArrayList<>();
     private List<DataBox> listOfDataBoxes = createBenchmarksListCollections();
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -104,8 +104,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         startTime = System.currentTimeMillis();
 
         Thread threadAddingInTheBeginningOfArrayList = new Thread(new Runnable() {
+            final List<Character> arrayList = new ArrayList<>();
             @Override
             public void run() {
+                startTime = System.currentTimeMillis();
                 for (int i = 0; i < amountOfOperations; i++) {
                     arrayList.add(i, charToAction);
                 }
@@ -113,19 +115,57 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        actionsWithCollections(resultTime);
+                        actionsWithCollections(0, resultTime);
                     }
                 });
             }
         });
         threadAddingInTheBeginningOfArrayList.start();
+
+        Thread threadAddingInTheMiddleOfArrayList = new Thread(new Runnable() {
+            final List<Character> arrayList1 = new ArrayList<>(Arrays.asList('a', 'a'));
+
+            @Override
+            public void run() {
+                for (int i = 0; i < amountOfOperations; i++) {
+//                    System.out.println(arrayList1.size()/2);
+                    arrayList1.add(arrayList1.size()/2, charToAction);
+                }
+                long resultTime1 = System.currentTimeMillis() - startTime;
+                handler.post((new Runnable() {
+                    @Override
+                    public void run() {
+                        actionsWithCollections(1, resultTime1);
+                    }
+                }));
+            }
+        });
+        threadAddingInTheMiddleOfArrayList.start();
+
+        Thread threadAddingInTheEndOfArrayList = new Thread(new Runnable() {
+            private final List<Character> arrayList2 = new ArrayList<>(Arrays.asList('a', 'a'));
+            @Override
+            public void run() {
+                for (int i = 0; i < amountOfOperations; i++) {
+                    arrayList2.add(arrayList2.size() - 1, charToAction);
+                }
+                long resultTime2 = System.currentTimeMillis() - startTime;
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionsWithCollections(2, resultTime2);
+                    }
+                });
+            }
+        });
+        threadAddingInTheEndOfArrayList.start();
     }
 
-    public void actionsWithCollections(long resultTime) {
+    public void actionsWithCollections(int index, long resultTime) {
 
         DataBox dataBox = new DataBox(0 ,((int) resultTime) );
-        listOfDataBoxes.set(0, dataBox);
+        listOfDataBoxes.set(index, dataBox);
         adapter.setItems(listOfDataBoxes);
     }
 }
-

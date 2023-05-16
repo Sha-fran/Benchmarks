@@ -9,8 +9,4 @@ public class DataBox {
         this.text = text;
         this.time = time;
     }
-
-//    public DataBox(int text) {
-//        this(text, 0);
-//    }
 }
