@@ -1,9 +1,12 @@
-package com.example.task3_benchmarks;
+package com.example.task3_benchmarks.ui.benchmark;
 
-import static com.example.task3_benchmarks.EditDataDialogFragment.ENTER_AMOUNT_OF_OPERATIONS;
-import static com.example.task3_benchmarks.EditDataDialogFragment.RESULT_OF_AMOUNT_OF_OPERATIONS;
+import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.ENTER_AMOUNT_OF_OPERATIONS;
+import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.RESULT_OF_AMOUNT_OF_OPERATIONS;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,17 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.example.task3_benchmarks.R;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
+import com.example.task3_benchmarks.models.DataBox;
+import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
 
 public class FragmentMaps extends Fragment implements View.OnClickListener {
-    private FragmentCollectionsBinding binding;
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
+    private FragmentCollectionsBinding binding;
     private int amountOfOperations;
 
     @Override
@@ -36,6 +38,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
             }
         });
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCollectionsBinding.inflate(inflater, container, false);

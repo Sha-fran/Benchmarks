@@ -1,4 +1,4 @@
-package com.example.task3_benchmarks;
+package com.example.task3_benchmarks.models;
 
 public class DataBox {
 

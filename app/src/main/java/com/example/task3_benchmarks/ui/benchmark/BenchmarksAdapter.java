@@ -1,4 +1,4 @@
-package com.example.task3_benchmarks;
+package com.example.task3_benchmarks.ui.benchmark;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.task3_benchmarks.databinding.DataBoxItemBinding;
+import com.example.task3_benchmarks.databinding.ItemBenchmarkBinding;
+import com.example.task3_benchmarks.models.DataBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
 
     private List<DataBox> items = new ArrayList<>();
 
-    public synchronized void setItems(List <DataBox> items) {
+    public synchronized void setItems(List<DataBox> items) {
         this.items = items;
         notifyDataSetChanged();
     }
@@ -23,16 +24,14 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     @NonNull
     @Override
     public BenchmarksViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        DataBoxItemBinding binding = DataBoxItemBinding.inflate(inflater, parent, false);
+        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        final ItemBenchmarkBinding binding = ItemBenchmarkBinding.inflate(inflater, parent, false);
         return new BenchmarksViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BenchmarksViewHolder holder, int position) {
-        DataBox dataBox = items.get(position);
-        holder.bind(dataBox);
-
+        holder.bind(items.get(position));
     }
 
     @Override
@@ -40,13 +39,15 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
         return items.size();
     }
 
-    static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
-        private final DataBoxItemBinding binding;
 
-        private BenchmarksViewHolder(DataBoxItemBinding binding) {
+    static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
+        private final ItemBenchmarkBinding binding;
+
+        private BenchmarksViewHolder(ItemBenchmarkBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
+
         void bind(DataBox item) {
             if (item.text == 0) {
                 binding.dataBoxView.setText(String.valueOf(item.time));
