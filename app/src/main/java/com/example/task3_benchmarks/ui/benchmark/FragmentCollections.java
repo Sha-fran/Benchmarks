@@ -122,7 +122,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             @Override
             public void run() {
                 for (int i = 0; i < amountOfOperations; i++) {
-//                    System.out.println(arrayList1.size()/2);
                     arrayList1.add(arrayList1.size() / 2, charToAction);
                 }
                 long resultTime1 = System.currentTimeMillis() - startTime;
