@@ -1,9 +1,9 @@
 package com.example.task3_benchmarks.ui.input;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +11,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.task3_benchmarks.R;
 import com.example.task3_benchmarks.databinding.FragmentInputBinding;
+
+import java.util.Objects;
 
 public class EditDataDialogFragment extends DialogFragment implements View.OnClickListener {
     public static final String ENTER_AMOUNT_OF_OPERATIONS = "Enter amount of operations";
@@ -22,22 +24,23 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
     public static EditDataDialogFragment newInstance() {
         return new EditDataDialogFragment();
     }
-
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentInputBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+    public Dialog onCreateDialog(@Nullable Bundle saveInstanceState) {
+       Dialog dialog = new Dialog(getContext());
+       binding = FragmentInputBinding.inflate(getLayoutInflater(),null, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        binding.buttonCalculate.setOnClickListener(this);
+       dialog.setContentView(binding.getRoot());
+       dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+       binding.buttonCalculate.setOnClickListener(this);
+       setCancelable(false);
+
+       return dialog;
     }
 
     @Override
     public void onClick(View view) {
-        String enteredAmountOfOperations = binding.enterANumber.getText().toString();
+        String enteredAmountOfOperations = Objects.requireNonNull(binding.enterANumber.getText()).toString();
 
         if (enteredAmountOfOperations.isEmpty()) {
             binding.enterANumber.setError(getString(R.string.imput_is_empty_please));

@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.task3_benchmarks.R;
@@ -94,6 +96,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+//        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+//        DialogFragment newFragment = EditDataDialogFragment.newInstance();
+//        ft.add(R.id.editDataDialog, newFragment);
+//        ft.commit();
     }
 
     public void handleFragmentResult(String requestKey, Bundle result) {
