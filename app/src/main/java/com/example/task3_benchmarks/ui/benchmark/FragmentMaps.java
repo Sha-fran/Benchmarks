@@ -20,11 +20,19 @@ import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FragmentMaps extends Fragment implements View.OnClickListener {
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private FragmentCollectionsBinding binding;
+    final char charToAction = 'a';
     private int amountOfOperations;
+    final List<Runnable> operationsList = new ArrayList<>();
+    List<Character> arrayList = new ArrayList<>();
+    List<Character> arrayList1 = new ArrayList<>(Arrays.asList('a', 'a'));
+    List<Character> arrayList2 = new ArrayList<>(Arrays.asList('a', 'a'));
+    int index = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,8 +63,20 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         adapter.setItems(createBenchmarksListMaps());
     }
 
+    private List<Runnable> createOperationsList() {
+        final List<Runnable> opList = new ArrayList<>();
+
+        opList.add(() -> arrayList.add(index, charToAction));
+        opList.add(() -> arrayList1.add(arrayList.size() / 2, charToAction));
+        opList.add(() -> arrayList2.add(arrayList2.size() - 1, charToAction));
+
+        return opList;
+    }
+
     private ArrayList<DataBox> createBenchmarksListMaps() {
         final ArrayList<DataBox> list = new ArrayList<>();
+
+        final List<Runnable> operations = new ArrayList<>(createOperationsList());
 
         final int[] textArrayMaps = {
                 R.string.adding_new_in_treemap,
@@ -68,7 +88,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         };
 
         for (int i = 0; i < textArrayMaps.length; i++) {
-            DataBox dataBox = new DataBox((int) textArrayMaps[i], 0);
+            DataBox dataBox = new DataBox(textArrayMaps[i], (int) System.currentTimeMillis(), operations.get(i));
             list.add(dataBox);
         }
         return list;
