@@ -39,6 +39,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private long startTime;
     final char charToAction = 'a', charToSearch = 'b';
     final List <DataBox> benchmarkItems = createBenchmarkItems();
+    final List<Runnable> operations = new ArrayList<>(createOperationsList());
+    final List<List> arraysToWork = new ArrayList<>(createArraysToWorkList());
+    private int index = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,9 +70,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private List<DataBox> createBenchmarkItems() {
         final List<DataBox> list = new ArrayList<>();
 
-        final List<Runnable> operations = new ArrayList<>(createOperationsList());
-        final List<List> arraysToWork = new ArrayList<>(createArraysToWorkList());
-
         final int[] textArrayCollections = {
                 R.string.adding_in_the_beginning_of_arrayList,
                 R.string.adding_in_the_middle_of_arrayList,
@@ -95,7 +95,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), operations.get(i), arraysToWork.get(i));
+            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis());
             list.add(dataBox);
         }
 
@@ -104,50 +104,51 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     private List<Runnable> createOperationsList() {
         final ArrayList<Runnable> opList = new ArrayList<>();
-        opList.add(() -> benchmarkItems.get(0).list.add(charToAction));
-        opList.add(() -> benchmarkItems.get(1).list.add (benchmarkItems.get(1).list.size() / 2, charToAction));
-        opList.add(() -> benchmarkItems.get(2).list.add(benchmarkItems.get(2).list.size() - 1, charToAction));
+        opList.add(() -> arraysToWork.get(0).add(0, charToAction));
+        opList.add(() -> arraysToWork.get(1).add(arraysToWork.size() / 2, charToAction));
+        opList.add(() -> arraysToWork.get(2).add(arraysToWork.get(0).size() - 1, charToAction));
         opList.add(() -> {
             for ( int i = 0; i < amountOfOperations; i++) {
-                if (((char) benchmarkItems.get(3).list.get(i)) == charToSearch) {
+                if ((char)arraysToWork.get(3).get(i) == charToSearch) {
                     break;
                 }
             }
         });
-        opList.add(() -> benchmarkItems.get(4).list.remove(0));
-        opList.add(() -> benchmarkItems.get(5).list.remove(benchmarkItems.get(5).list.size() / 2));
-        opList.add(() -> benchmarkItems.get(6).list.remove(benchmarkItems.get(6).list.size() - 1));
+        opList.add(() -> arraysToWork.get(4).remove(0));
+        opList.add(() -> arraysToWork.get(5).remove(arraysToWork.get(5).size() / 2));
+        opList.add(() -> arraysToWork.get(6).remove(arraysToWork.get(6).size() - 1));
 
-        opList.add(() -> benchmarkItems.get(7).list.add(charToAction));
-        opList.add(() -> benchmarkItems.get(8).list.add(benchmarkItems.get(8).list.size() / 2, charToAction));
-        opList.add(() -> benchmarkItems.get(9).list.add(benchmarkItems.get(9).list.size() - 1, charToAction));
+        opList.add(() -> arraysToWork.get(7).add(0, charToAction));
+        opList.add(() -> arraysToWork.get(8).add(arraysToWork.get(8).size() / 2, charToAction));
+        opList.add(() -> arraysToWork.get(9).add(arraysToWork.get(9).size() - 1, charToAction));
         opList.add(() -> {
             for ( int i = 0; i < amountOfOperations; i++) {
-                if (((char)benchmarkItems.get(10).list.get(i)) == charToSearch) {
+                if ((char)arraysToWork.get(10).get(i) == charToSearch) {
                     break;
                 }
             }
         });
-        opList.add(() -> benchmarkItems.get(11).list.remove(0));
-        opList.add(() -> benchmarkItems.get(12).list.remove(benchmarkItems.get(12).list.size() / 2));
-        opList.add(() -> benchmarkItems.get(13).list.remove(benchmarkItems.get(13).list.size() - 1));
+        opList.add(() -> arraysToWork.get(11).remove(0));
+        opList.add(() -> arraysToWork.get(12).remove(arraysToWork.get(12).size() / 2));
+        opList.add(() -> arraysToWork.get(13).remove(arraysToWork.get(13).size() - 1));
 
-        opList.add(() -> benchmarkItems.get(14).list.add(charToAction));
-        opList.add(() -> benchmarkItems.get(15).list.add(benchmarkItems.get(15).list.size() / 2, charToAction));
-        opList.add(() -> benchmarkItems.get(16).list.add(benchmarkItems.get(16).list.size() - 1, charToAction));
+        opList.add(() -> arraysToWork.get(14).add(0, charToAction));
+        opList.add(() -> arraysToWork.get(15).add(arraysToWork.get(15).size() / 2, charToAction));
+        opList.add(() -> arraysToWork.get(16).add(arraysToWork.get(16).size() - 1, charToAction));
         opList.add(() -> {
             for ( int i = 0; i < amountOfOperations; i++) {
-                if (((char) benchmarkItems.get(17).list.get(i)) == charToSearch) {
+                if ((char)arraysToWork.get(17).get(i) == charToSearch) {
                     break;
                 }
             }
         });
-        opList.add(() -> benchmarkItems.get(18).list.remove(0));
-        opList.add(() -> benchmarkItems.get(19).list.remove(benchmarkItems.get(19).list.size() / 2));
-        opList.add(() -> benchmarkItems.get(20).list.remove(benchmarkItems.get(20).list.size() - 1));
+        opList.add(() -> arraysToWork.get(18).remove(0));
+        opList.add(() -> arraysToWork.get(19).remove(arraysToWork.get(19).size() / 2));
+        opList.add(() -> arraysToWork.get(20).remove(arraysToWork.get(20).size() - 1));
 
         return opList;
     }
+
 
     public List<List> createArraysToWorkList() {
         final List<List> arrayLists = new ArrayList<>();
@@ -192,27 +193,33 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         startTime = System.currentTimeMillis();
 
-        for( int j = 0; j < benchmarkItems.size(); j++) {
-            int finalJ = j;
+        for( DataBox iem : benchmarkItems) {
             pool.submit(()->{
                 for (int i = 0; i < amountOfOperations; i++) {
-                    Runnable operation = benchmarkItems.get(finalJ).operation;
-                    operation.run();
+                    operations.get(index).run();
                 }
                 long resultTime = System.currentTimeMillis() - startTime;
-                handler.post(() -> actionsWithCollections(finalJ, resultTime));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        DataBox dataBox = new DataBox(0, ((int) resultTime));
+                        createBenchmarkItems().set(index, dataBox);
+                        adapter.setItems(benchmarkItems);
+                    }
+                });
             });
+            index++;
         }
         pool.shutdown();
     }
-
-    public void actionsWithCollections(int index, long resultTime) {
-
-        DataBox dataBox = new DataBox(0, ((int) resultTime), benchmarkItems.get(index).operation, benchmarkItems.get(index).list);
-        createBenchmarkItems().set(index, dataBox);
-        adapter.setItems(benchmarkItems);
-
-    }
+//
+//    public void actionsWithCollections(DataBox iem, long resultTime) {
+//
+//        DataBox dataBox = new DataBox(0, ((int) resultTime));
+//        createBenchmarkItems().set(index, dataBox);
+//        adapter.setItems(benchmarkItems);
+//
+//    }
 
     public List<Character> arrayListForSearch(int amountOfOperations) {
         List <Character> aLFS = new ArrayList<>();
