@@ -88,7 +88,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         };
 
         for (int i = 0; i < textArrayMaps.length; i++) {
-            DataBox dataBox = new DataBox(textArrayMaps[i], (int) System.currentTimeMillis(), operations.get(i));
+            DataBox dataBox = new DataBox(textArrayMaps[i], (int) System.currentTimeMillis(), operations.get(i), list);
             list.add(dataBox);
         }
         return list;

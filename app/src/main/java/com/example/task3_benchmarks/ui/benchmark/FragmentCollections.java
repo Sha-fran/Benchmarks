@@ -39,22 +39,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private long startTime;
     final char charToAction = 'a', charToSearch = 'b';
     final List <DataBox> benchmarkItems = createBenchmarkItems();
-    final List<Runnable> operationsList = new ArrayList<>();
-    List<Character> arrayList = new ArrayList<>();
-    List<Character> arrayList1 = new ArrayList<>(Arrays.asList('a', 'a'));
-    List<Character> arrayList2 = new ArrayList<>(Arrays.asList('a', 'a'));
-    List<Character> arrayList3, arrayList4, arrayList5, arrayList6;
-
-    List<Character> linkedList = new LinkedList<>();
-    List<Character> linkedList1 = new LinkedList<>(Arrays.asList('a', 'a'));
-    List<Character> linkedList2 = new LinkedList<>(Arrays.asList('a', 'a'));
-    List<Character> linkedList3, linkedList4, linkedList5, linkedList6;
-
-    List<Character> copyOnWrightArrayList = new CopyOnWriteArrayList<>();
-    List<Character> copyOnWrightArrayList1 = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
-    List<Character> copyOnWrightArrayList2 = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
-    List<Character> copyOnWrightArrayList3, copyOnWrightArrayList4, copyOnWrightArrayList5, copyOnWrightArrayList6;
-    int index = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,57 +64,11 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         adapter.setItems(benchmarkItems);
     }
 
-    private List<Runnable> createOperationsList() {
-        final ArrayList<Runnable> opList = new ArrayList<>();
-        opList.add(() -> arrayList.add(0, charToAction));
-        opList.add(() -> arrayList1.add(arrayList1.size() / 2, charToAction));
-        opList.add(() -> arrayList2.add(arrayList2.size() - 1, charToAction));
-        opList.add(() -> {
-            for ( int i = 0; i < amountOfOperations; i++) {
-                if (arrayList3.get(i) == charToSearch) {
-                    break;
-                }
-            }
-        });
-        opList.add(() -> arrayList4.remove(0));
-        opList.add(() -> arrayList5.remove(arrayList5.size() / 2));
-        opList.add(() -> arrayList6.remove(arrayList6.size() - 1));
-
-        opList.add(() -> linkedList.add(0, charToAction));
-        opList.add(() -> linkedList1.add(linkedList1.size() / 2, charToAction));
-        opList.add(() -> linkedList2.add(linkedList2.size() - 1, charToAction));
-        opList.add(() -> {
-            for ( int i = 0; i < amountOfOperations; i++) {
-                if (linkedList3.get(i) == charToSearch) {
-                    break;
-                }
-            }
-        });
-        opList.add(() -> linkedList4.remove(0));
-        opList.add(() -> linkedList5.remove(linkedList5.size() / 2));
-        opList.add(() -> linkedList6.remove(linkedList6.size() - 1));
-
-        opList.add(() -> copyOnWrightArrayList.add(0, charToAction));
-        opList.add(() -> copyOnWrightArrayList1.add(copyOnWrightArrayList1.size() / 2, charToAction));
-        opList.add(() -> copyOnWrightArrayList2.add(copyOnWrightArrayList2.size() - 1, charToAction));
-        opList.add(() -> {
-            for ( int i = 0; i < amountOfOperations; i++) {
-                if (copyOnWrightArrayList3.get(i) == charToSearch) {
-                    break;
-                }
-            }
-        });
-        opList.add(() -> copyOnWrightArrayList4.remove(0));
-        opList.add(() -> copyOnWrightArrayList5.remove(copyOnWrightArrayList5.size() / 2));
-        opList.add(() -> copyOnWrightArrayList6.remove(copyOnWrightArrayList6.size() - 1));
-
-        return opList;
-    }
-
     private List<DataBox> createBenchmarkItems() {
         final List<DataBox> list = new ArrayList<>();
 
         final List<Runnable> operations = new ArrayList<>(createOperationsList());
+        final List<List> arraysToWork = new ArrayList<>(createArraysToWorkList());
 
         final int[] textArrayCollections = {
                 R.string.adding_in_the_beginning_of_arrayList,
@@ -157,11 +95,88 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), operations.get(i));
+            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), operations.get(i), arraysToWork.get(i));
             list.add(dataBox);
         }
 
         return list;
+    }
+
+    private List<Runnable> createOperationsList() {
+        final ArrayList<Runnable> opList = new ArrayList<>();
+        opList.add(() -> benchmarkItems.get(0).list.add(charToAction));
+        opList.add(() -> benchmarkItems.get(1).list.add (benchmarkItems.get(1).list.size() / 2, charToAction));
+        opList.add(() -> benchmarkItems.get(2).list.add(benchmarkItems.get(2).list.size() - 1, charToAction));
+        opList.add(() -> {
+            for ( int i = 0; i < amountOfOperations; i++) {
+                if (((char) benchmarkItems.get(3).list.get(i)) == charToSearch) {
+                    break;
+                }
+            }
+        });
+        opList.add(() -> benchmarkItems.get(4).list.remove(0));
+        opList.add(() -> benchmarkItems.get(5).list.remove(benchmarkItems.get(5).list.size() / 2));
+        opList.add(() -> benchmarkItems.get(6).list.remove(benchmarkItems.get(6).list.size() - 1));
+
+        opList.add(() -> benchmarkItems.get(7).list.add(charToAction));
+        opList.add(() -> benchmarkItems.get(8).list.add(benchmarkItems.get(8).list.size() / 2, charToAction));
+        opList.add(() -> benchmarkItems.get(9).list.add(benchmarkItems.get(9).list.size() - 1, charToAction));
+        opList.add(() -> {
+            for ( int i = 0; i < amountOfOperations; i++) {
+                if (((char)benchmarkItems.get(10).list.get(i)) == charToSearch) {
+                    break;
+                }
+            }
+        });
+        opList.add(() -> benchmarkItems.get(11).list.remove(0));
+        opList.add(() -> benchmarkItems.get(12).list.remove(benchmarkItems.get(12).list.size() / 2));
+        opList.add(() -> benchmarkItems.get(13).list.remove(benchmarkItems.get(13).list.size() - 1));
+
+        opList.add(() -> benchmarkItems.get(14).list.add(charToAction));
+        opList.add(() -> benchmarkItems.get(15).list.add(benchmarkItems.get(15).list.size() / 2, charToAction));
+        opList.add(() -> benchmarkItems.get(16).list.add(benchmarkItems.get(16).list.size() - 1, charToAction));
+        opList.add(() -> {
+            for ( int i = 0; i < amountOfOperations; i++) {
+                if (((char) benchmarkItems.get(17).list.get(i)) == charToSearch) {
+                    break;
+                }
+            }
+        });
+        opList.add(() -> benchmarkItems.get(18).list.remove(0));
+        opList.add(() -> benchmarkItems.get(19).list.remove(benchmarkItems.get(19).list.size() / 2));
+        opList.add(() -> benchmarkItems.get(20).list.remove(benchmarkItems.get(20).list.size() - 1));
+
+        return opList;
+    }
+
+    public List<List> createArraysToWorkList() {
+        final List<List> arrayLists = new ArrayList<>();
+
+        arrayLists.add(new ArrayList<>());
+        arrayLists.add(new ArrayList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new ArrayList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new ArrayList<>(arrayListForSearch(amountOfOperations)));
+        arrayLists.add(new ArrayList<>(arrayListForSearch(amountOfOperations)));
+        arrayLists.add(new ArrayList<>(arrayListForSearch(amountOfOperations)));
+        arrayLists.add(new ArrayList<>(arrayListForSearch(amountOfOperations)));
+
+        arrayLists.add(new LinkedList<>());
+        arrayLists.add(new LinkedList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new LinkedList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new LinkedList<>(linkedListForSearch(amountOfOperations)));
+        arrayLists.add(new LinkedList<>(linkedListForSearch(amountOfOperations)));
+        arrayLists.add(new LinkedList<>(linkedListForSearch(amountOfOperations)));
+        arrayLists.add(new LinkedList<>(linkedListForSearch(amountOfOperations)));
+
+        arrayLists.add(new CopyOnWriteArrayList<>());
+        arrayLists.add(new CopyOnWriteArrayList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new CopyOnWriteArrayList<>(Arrays.asList('a', 'a')));
+        arrayLists.add(new CopyOnWriteArrayList<>(new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations))));
+        arrayLists.add(new CopyOnWriteArrayList<>(new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations))));
+        arrayLists.add(new CopyOnWriteArrayList<>(new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations))));
+        arrayLists.add(new CopyOnWriteArrayList<>(new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations))));
+
+        return arrayLists;
     }
 
     public void onClick(View view) {
@@ -170,87 +185,30 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public void handleFragmentResult(String requestKey, Bundle result) {
         amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
-        arrayList3 = new ArrayList<>(arrayListForSearch(amountOfOperations));
-        arrayList4 = new ArrayList<>(arrayListForSearch(amountOfOperations));
-        arrayList5 = new ArrayList<>(arrayListForSearch(amountOfOperations));
-        arrayList6 = new ArrayList<>(arrayListForSearch(amountOfOperations));
-
-        linkedList3 = new LinkedList<>(linkedListForSearch(amountOfOperations));
-        linkedList4 = new LinkedList<>(linkedListForSearch(amountOfOperations));
-        linkedList5 = new LinkedList<>(linkedListForSearch(amountOfOperations));
-        linkedList6 = new LinkedList<>(linkedListForSearch(amountOfOperations));
-
-        copyOnWrightArrayList3 = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
-        copyOnWrightArrayList4 = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
-        copyOnWrightArrayList5 = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
-        copyOnWrightArrayList6 = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
 
         binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
 
-        ExecutorService pool = Executors.newFixedThreadPool(createBenchmarkItems().size());
+        ExecutorService pool = Executors.newFixedThreadPool(benchmarkItems.size());
 
         startTime = System.currentTimeMillis();
 
-        for( DataBox iem : benchmarkItems) {
+        for( int j = 0; j < benchmarkItems.size(); j++) {
+            int finalJ = j;
             pool.submit(()->{
                 for (int i = 0; i < amountOfOperations; i++) {
-                    Runnable operation = iem.operation;
+                    Runnable operation = benchmarkItems.get(finalJ).operation;
                     operation.run();
                 }
                 long resultTime = System.currentTimeMillis() - startTime;
-                handler.post(() -> actionsWithCollections(0, resultTime));
+                handler.post(() -> actionsWithCollections(finalJ, resultTime));
             });
         }
         pool.shutdown();
-
-//        Thread threadAddingInTheBeginningOfArrayList = new Thread(new Runnable() {
-//            final List<Character> arrayList = new ArrayList<>();
-//
-//            @Override
-//            public void run() {
-//                startTime = System.currentTimeMillis();
-//                for (int i = 0; i < amountOfOperations; i++) {
-//                    arrayList.add(i, charToAction);
-//                }
-//                long resultTime = System.currentTimeMillis() - startTime;
-//                handler.post(() -> actionsWithCollections(0, resultTime));
-//            }
-//        });
-//        threadAddingInTheBeginningOfArrayList.start();
-//
-//        Thread threadAddingInTheMiddleOfArrayList = new Thread(new Runnable() {
-//            final List<Character> arrayList1 = new ArrayList<>(Arrays.asList('a', 'a'));
-//
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < amountOfOperations; i++) {
-//                    arrayList1.add(arrayList1.size() / 2, charToAction);
-//                }
-//                long resultTime1 = System.currentTimeMillis() - startTime;
-//                handler.post((() -> actionsWithCollections(1, resultTime1)));
-//            }
-//        });
-//        threadAddingInTheMiddleOfArrayList.start();
-//
-//        Thread threadAddingInTheEndOfArrayList = new Thread(new Runnable() {
-//            private final List<Character> arrayList2 = new ArrayList<>(Arrays.asList('a', 'a'));
-//
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < amountOfOperations; i++) {
-//                    arrayList2.add(arrayList2.size() - 1, charToAction);
-//                }
-//                long resultTime2 = System.currentTimeMillis() - startTime;
-//
-//                handler.post(() -> actionsWithCollections(2, resultTime2));
-//            }
-//        });
-//        threadAddingInTheEndOfArrayList.start();
     }
 
     public void actionsWithCollections(int index, long resultTime) {
 
-        DataBox dataBox = new DataBox(0, ((int) resultTime), operationsList.get(index));
+        DataBox dataBox = new DataBox(0, ((int) resultTime), benchmarkItems.get(index).operation, benchmarkItems.get(index).list);
         createBenchmarkItems().set(index, dataBox);
         adapter.setItems(benchmarkItems);
 
@@ -258,31 +216,23 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public List<Character> arrayListForSearch(int amountOfOperations) {
         List <Character> aLFS = new ArrayList<>();
-        Random random = new Random();
-        int indexForSearch = random.nextInt(amountOfOperations - 1);
+//        Random random = new Random();
+//        int indexForSearch = random.nextInt(amountOfOperations - 1);
 
         for (int i = 0; i < amountOfOperations; i++) {
-            if (i == indexForSearch) {
-                aLFS.add(i, charToSearch);
-            } else {
                 aLFS.add(i, charToAction);
-            }
         }
+//        aLFS.remove(indexForSearch);
+//        aLFS.add(indexForSearch, charToSearch);
 
         return aLFS;
     }
 
     public List<Character> linkedListForSearch(int amountOfOperations) {
         List <Character> lLFS = new LinkedList<>();
-        Random random = new Random();
-        int indexForSearch = random.nextInt(amountOfOperations - 1);
 
         for (int i = 0; i < amountOfOperations; i++) {
-            if (i == indexForSearch) {
                 lLFS.add(i, charToSearch);
-            } else {
-                lLFS.add(i, charToAction);
-            }
         }
 
         return lLFS;
@@ -290,16 +240,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public List<Character> copyOnWriteArrayListForSearch(int amountOfOperations) {
         List <Character> cWALFS = new CopyOnWriteArrayList<>();
-        Random random = new Random();
-        int indexForSearch = random.nextInt(amountOfOperations - 1);
 
         for (int i = 0; i < amountOfOperations; i++) {
-            if (i == indexForSearch) {
-                cWALFS.add(i, charToSearch);
-            } else {
                 cWALFS.add(i, charToAction);
             }
-        }
 
         return cWALFS;
     }
