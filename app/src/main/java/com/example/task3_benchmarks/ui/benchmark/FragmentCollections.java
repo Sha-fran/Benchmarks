@@ -47,7 +47,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS,
-                this, (requestKey, result) -> handleFragmentResult(requestKey, result)
+                this, (requestKey, result) -> amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS)
         );
     }
 
@@ -61,7 +61,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonStartFragmentsCollections.setOnClickListener(this);
+        binding.textInputLayoutCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
         adapter.setItems(benchmarkItems);
@@ -181,16 +181,16 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void onClick(View view) {
-        EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+        if (view == binding.textInputLayoutCollections) {
+            EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+            binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
+        } else if (view == binding.buttonStartFragmentsCollections) {
+            calculationsStart();
+        }
     }
 
-    public void handleFragmentResult(String requestKey, Bundle result) {
-        amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
-
-        binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
-
+    public void calculationsStart() {
         ExecutorService pool = Executors.newFixedThreadPool(benchmarkItems.size());
-
         startTime = System.currentTimeMillis();
 
         for( DataBox iem : benchmarkItems) {
@@ -202,8 +202,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        DataBox dataBox = new DataBox(0, ((int) resultTime));
-                        createBenchmarkItems().set(index, dataBox);
+                        iem.setTime((int) resultTime);
+                        iem.setText(0);
+                        createBenchmarkItems().set(index, iem);
                         adapter.setItems(benchmarkItems);
                     }
                 });
