@@ -16,7 +16,7 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
 
     private final List<DataBox> items = new ArrayList<>();
 
-    public synchronized void setItems(List<DataBox> items) {
+    public void setItems(List<DataBox> items) {
         this.items.addAll(items);
         notifyDataSetChanged();
     }
