@@ -23,15 +23,15 @@
         tools:text="adding in the beginning of ArrayList" />
 
 
-    <!--    <com.google.android.material.progressindicator.CircularProgressIndicator-->
-<!--        android:id="@+id/cell_bar"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:indeterminate="true"-->
-<!--        android:visibility="@{itemData.visibilityOfBar}"-->
-<!--        app:layout_constraintBottom_toBottomOf="@id/data_box_view"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/data_box_view"-->
-<!--        app:layout_constraintStart_toStartOf="@id/data_box_view"-->
-<!--        app:layout_constraintTop_toTopOf="@id/data_box_view" />-->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_circular_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/data_box_view"
+        app:layout_constraintEnd_toEndOf="@id/data_box_view"
+        app:layout_constraintStart_toStartOf="@id/data_box_view"
+        app:layout_constraintTop_toTopOf="@id/data_box_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

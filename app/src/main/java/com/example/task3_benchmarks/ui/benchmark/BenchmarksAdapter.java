@@ -1,7 +1,9 @@
 package com.example.task3_benchmarks.ui.benchmark;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,15 +47,21 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
         private final ItemBenchmarkBinding binding;
+        private final ProgressBar progressBar;
 
         private BenchmarksViewHolder(ItemBenchmarkBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            progressBar = binding.progressCircularBar;
         }
-
         void bind(DataBox item) {
+            if (item.isProgressVisible()) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
             if (item.text == 0) {
                 binding.dataBoxView.setText(String.valueOf(item.time));
+                progressBar.setVisibility(View.INVISIBLE);
             } else {
                 binding.dataBoxView.setText(item.text);
             }

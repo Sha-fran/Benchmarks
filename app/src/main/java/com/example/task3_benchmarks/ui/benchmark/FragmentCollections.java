@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
 
@@ -37,7 +38,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private int amountOfOperations;
     final char charToAction = 'a', charToSearch = 'b';
     final List <DataBox> benchmarkItems = createBenchmarkItems();
-    private boolean onPause = false;
+    private List<Future<?>> runningTasks = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i] , (int) System.currentTimeMillis());
+            DataBox dataBox = new DataBox(textArrayCollections[i] , (int) System.currentTimeMillis(), false);
             list.add(dataBox);
         }
 
@@ -100,28 +101,44 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void onClick(View view) {
+        ExecutorService pool = Executors.newFixedThreadPool(7);
+
         if (view == binding.textInputLayoutCollections) {
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
             binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
         } else if (view == binding.buttonStartFragmentsCollections) {
             binding.buttonStartFragmentsCollections.setVisibility(View.INVISIBLE);
             binding.buttonStopFragmentsCollections.setVisibility(View.VISIBLE);
-            onPause = false;
             calculations();
         } else if (view == binding.buttonStopFragmentsCollections) {
+            for (Future<?> task : runningTasks) {
+                task.cancel(true);
+            }
+            pool.shutdown();
             binding.buttonStartFragmentsCollections.setVisibility(View.VISIBLE);
             binding.buttonStopFragmentsCollections.setVisibility(View.INVISIBLE);
-            onPause = true;
         }
     }
 
+    public void startProgressInAllCells() {
+        for (int i = 0; i < benchmarkItems.size(); i++) {
+            benchmarkItems.get(i).setProgressVisible(true);
+        }
+        adapter.setItems(benchmarkItems);
+    }
+
     public void calculations() {
-        ExecutorService pool = Executors.newFixedThreadPool(benchmarkItems.size());
+        startProgressInAllCells();
+        ExecutorService pool = Executors.newFixedThreadPool(7);
 
         for (DataBox item : benchmarkItems) {
-            pool.submit(() -> {
+            Runnable task = () -> {
                 if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
                     addingInTheBeginningOfArrayList();
+
+                    if (binding.buttonStopFragmentsCollections.callOnClick()) {
+                        pool.shutdown();
+                    }
                 } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
                     addingInTheMiddleOfArrayList();
                 } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
@@ -163,9 +180,13 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 } else {
                     removingInTheEndOfCopyrightableList();
                 }
-            });
+            };
+            Future<?> future = pool.submit(task);
+            runningTasks.add(future);
         }
         pool.shutdown();
+        binding.buttonStartFragmentsCollections.setVisibility(View.INVISIBLE);
+        binding.buttonStopFragmentsCollections.setVisibility(View.VISIBLE);
     }
 
     public void addingInTheBeginningOfArrayList() {
@@ -179,7 +200,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(0, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -200,7 +221,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(1, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -221,7 +242,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(2, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -244,7 +265,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(3, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -265,7 +286,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(4, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -286,7 +307,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(5, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -307,7 +328,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(6, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -328,7 +349,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(7, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -349,7 +370,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(8, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -370,7 +391,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(9, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -393,7 +414,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(10, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -414,7 +435,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(11, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -435,7 +456,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(12, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -456,7 +477,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(13, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -477,7 +498,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(14, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -498,7 +519,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(15, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -519,7 +540,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(16, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -542,7 +563,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(17, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -563,7 +584,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(18, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -584,7 +605,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(19, dataBox);
         handler.post(new Runnable() {
             @Override
@@ -605,7 +626,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         resulTime = System.currentTimeMillis() - startTime;
 
-        DataBox dataBox = new DataBox(0, (int) resulTime);
+        DataBox dataBox = new DataBox(0, (int) resulTime, false);
         adapter.getItems().set(20, dataBox);
         handler.post(new Runnable() {
             @Override
