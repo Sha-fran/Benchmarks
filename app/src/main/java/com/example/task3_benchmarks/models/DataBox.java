@@ -4,12 +4,13 @@ public class DataBox {
 
     public final int text;
     public final int time;
+    private boolean progressVisible;
 
     public boolean isProgressVisible() {
         return progressVisible;
     }
 
-    private boolean progressVisible;
+
 
     public DataBox(int text, int time, boolean progressVisible) {
         this.text = text;
