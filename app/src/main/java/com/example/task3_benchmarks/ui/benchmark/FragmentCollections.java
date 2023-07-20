@@ -6,7 +6,6 @@ import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.RESUL
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.task3_benchmarks.R;
 import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
 import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,10 +27,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class FragmentCollections extends Fragment implements View.OnClickListener {
 
@@ -42,8 +34,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentCollectionsBinding binding;
     final char charToAction = 'a', charToSearch = 'b';
-    private boolean showProgress = false;
-    final List<DataBox> benchmarkItems = createBenchmarkItems(showProgress);
+    private ExecutorService pool = Executors.newFixedThreadPool(NUMBER_OF_CORES - 1);
+//    private boolean showProgress = false;
+//    final List<DataBox> benchmarkItems = createBenchmarkItems(showProgress);
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
 
@@ -71,10 +64,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setItems(benchmarkItems);
+        adapter.setItems(createBenchmarkItems());
     }
 
-    private List<DataBox> createBenchmarkItems(boolean showProgress) {
+    private List<DataBox> createBenchmarkItems() {
         final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayCollections = {
@@ -102,7 +95,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), showProgress);
+            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), false);
             list.add(dataBox);
         }
 
@@ -121,29 +114,23 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void progressInAllCells() {
-        for (int i = 0; i < benchmarkItems.size(); i++) {
-            showProgress = true;
-            benchmarkItems.get(i).setProgressVisible(showProgress);
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            adapter.getItems().set(i, new DataBox(adapter.getItems().get(i).text, adapter.getItems().get(i).time, true));
             adapter.notifyItemChanged(i);
         }
-        adapter.setItems(benchmarkItems);
     }
 
     public void stopProgressInAllCells() {
-        for (int i = 0; i < benchmarkItems.size(); i++) {
-            showProgress = false;
-            benchmarkItems.get(i).setProgressVisible(showProgress);
+        for (int i = 0; i <  adapter.getItems().size(); i++) {
+            adapter.getItems().set(i, new DataBox(adapter.getItems().get(i).text, adapter.getItems().get(i).time, false));
             adapter.notifyItemChanged(i);
         }
-        adapter.setItems(benchmarkItems);
     }
 
     public void calculations(int amountOfCalculation) {
-        ExecutorService pool = Executors.newFixedThreadPool(NUMBER_OF_CORES - 1);
-
         progressInAllCells();
 
-        for (DataBox item : benchmarkItems) {
+        for (DataBox item : adapter.getItems()) {
             pool.submit(() -> {
                 if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
                     Runnable task = new Runnable() {

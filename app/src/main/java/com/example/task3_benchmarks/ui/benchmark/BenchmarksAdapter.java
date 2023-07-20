@@ -16,14 +16,20 @@ import java.util.List;
 
 public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.BenchmarksViewHolder> {
 
-    private List<DataBox> items = new ArrayList<>();
+    private final List<DataBox> items = new ArrayList<>();
 
     public List<DataBox> getItems() {
         return items;
     }
 
     public void setItems(List<DataBox> items) {
-        this.items = items;
+        if (this.items.isEmpty()) {
+            this.items.addAll(items);
+        } else {
+            for (int i = 0; i < this.items.size(); i++) {
+                this.items.set(i, items.get(i)) ;
+            }
+        }
     }
 
     @NonNull
