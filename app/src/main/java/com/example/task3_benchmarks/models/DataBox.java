@@ -4,7 +4,8 @@ public class DataBox {
 
     public final int text;
     public final int time;
-    public final boolean progressVisible;
+
+    private boolean progressVisible;
 
     public boolean isProgressVisible() {
         return progressVisible;
@@ -13,6 +14,10 @@ public class DataBox {
     public DataBox(int text, int time, boolean progressVisible) {
         this.text = text;
         this.time = time;
+        this.progressVisible = progressVisible;
+    }
+
+    public void setProgressVisible(boolean progressVisible) {
         this.progressVisible = progressVisible;
     }
 }

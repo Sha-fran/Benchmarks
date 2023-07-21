@@ -33,11 +33,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentCollectionsBinding binding;
-    final char charToAction = 'a', charToSearch = 'b';
+    private final char charToAction = 'a', charToSearch = 'b';
     private ExecutorService pool = Executors.newFixedThreadPool(NUMBER_OF_CORES - 1);
-//    private boolean showProgress = false;
-//    final List<DataBox> benchmarkItems = createBenchmarkItems(showProgress);
-    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private boolean isRunning = false;
 
 
     @Override
@@ -60,14 +59,15 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.buttonStartStopFragmentsCollections.setText(R.string.start);
         binding.textInputLayoutCollections.setOnClickListener(this);
-        binding.buttonStartFragmentsCollections.setOnClickListener(this);
+        binding.buttonStartStopFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setItems(createBenchmarkItems());
+        adapter.setItems(createBenchmarkItems(false));
     }
 
-    private List<DataBox> createBenchmarkItems() {
+    private List<DataBox> createBenchmarkItems(boolean showProgress) {
         final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayCollections = {
@@ -95,7 +95,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), false);
+            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), showProgress);
             list.add(dataBox);
         }
 
@@ -106,213 +106,225 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
         if (view == binding.textInputLayoutCollections) {
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
-        } else if (view == binding.buttonStartFragmentsCollections) {
-            calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
-            binding.buttonStartFragmentsCollections.setVisibility(View.INVISIBLE);
-            binding.buttonStopFragmentsCollections.setVisibility(View.VISIBLE);
+        } else if (view == binding.buttonStartStopFragmentsCollections) {
+            if (isRunning) {
+                pool.shutdownNow();
+                pool = null;
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.buttonStartStopFragmentsCollections.setText(R.string.start);
+                        stopProgressInAllCells();
+                    }
+                });
+            } else {
+                progressInAllCells();
+                calculations();
+                isRunning = true;
+                binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
+            }
         }
     }
 
     public void progressInAllCells() {
-        for (int i = 0; i < adapter.getItems().size(); i++) {
-            adapter.getItems().set(i, new DataBox(adapter.getItems().get(i).text, adapter.getItems().get(i).time, true));
-            adapter.notifyItemChanged(i);
-        }
+        adapter.setItems(createBenchmarkItems(true));
     }
 
     public void stopProgressInAllCells() {
-        for (int i = 0; i <  adapter.getItems().size(); i++) {
-            adapter.getItems().set(i, new DataBox(adapter.getItems().get(i).text, adapter.getItems().get(i).time, false));
-            adapter.notifyItemChanged(i);
+        List<DataBox> list = new ArrayList<>(adapter.getItems());
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isProgressVisible()) {
+                list.get(i).setProgressVisible(false);
+            }
         }
+        adapter.setItems(list);
+
     }
 
-    public void calculations(int amountOfCalculation) {
-        progressInAllCells();
+    public void calculations() {
+        List<DataBox> benchmarkItems = new ArrayList<>(adapter.getItems());
 
-        for (DataBox item : adapter.getItems()) {
+        for (DataBox item : benchmarkItems) {
             pool.submit(() -> {
-                if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheBeginningOfArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
-                        Runnable task = new Runnable() {
-                            @Override
-                            public void run() {
-                                addingInTheMiddleOfArrayList(amountOfCalculation);
-                            }
-                        };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheEndOfArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.search_by_value_from_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            searchByValueFromArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheBeginningOfArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheMiddleOfArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheEndOfArrayList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheBeginningOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheMiddleOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheEndOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.search_by_value_from_linkedList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            searchByValueFromLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheBeginningOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheMiddleOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheEndOfLinkedList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheBeginningOfCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheMiddleOfCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            addingInTheEndOfCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.search_by_value_from_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            searchByValueFromCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheBeginningOfCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheMiddleOfCopyrightableList(amountOfCalculation);;
-                        }
-                    };
-                    task.run();
-                } else {
-                    Runnable task = new Runnable() {
-                        @Override
-                        public void run() {
-                            removingInTheEndOfCopyrightableList(amountOfCalculation);
-                        }
-                    };
-                    task.run();
-                }
+                measure(item);
             });
-        }
-        binding.buttonStopFragmentsCollections.setOnClickListener(v -> {
-            pool.shutdownNow();
-            stopProgressInAllCells();
-            binding.buttonStartFragmentsCollections.setVisibility(View.VISIBLE);
-            binding.buttonStopFragmentsCollections.setVisibility(View.INVISIBLE);
-        });
-
+        };
         pool.shutdown();
-        binding.buttonStartFragmentsCollections.setVisibility(View.INVISIBLE);
-        binding.buttonStopFragmentsCollections.setVisibility(View.VISIBLE);
+    }
+
+    public void measure(DataBox item) {
+        int amountOfCalculation = Integer.parseInt(binding.textInputLayoutCollections.getText().toString());
+
+        if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheBeginningOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheMiddleOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheEndOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.search_by_value_from_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    searchByValueFromArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheBeginningOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheMiddleOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheEndOfArrayList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheBeginningOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheMiddleOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheEndOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.search_by_value_from_linkedList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    searchByValueFromLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheBeginningOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheMiddleOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheEndOfLinkedList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheBeginningOfCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheMiddleOfCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    addingInTheEndOfCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.search_by_value_from_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    searchByValueFromCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheBeginningOfCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheMiddleOfCopyrightableList(amountOfCalculation);;
+                }
+            };
+            task.run();
+        } else {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    removingInTheEndOfCopyrightableList(amountOfCalculation);
+                }
+            };
+            task.run();
+        }
     }
 
     public void addingInTheBeginningOfArrayList(int amountOfOperations) {
@@ -747,7 +759,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
-            binding.buttonStopFragmentsCollections.callOnClick();
             copyOnWriteArrayList.remove(copyOnWriteArrayList.size() - 1);
         }
 
