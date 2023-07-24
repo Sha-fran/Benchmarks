@@ -17,7 +17,7 @@ public class DataBox {
         this.progressVisible = progressVisible;
     }
 
-    public void setProgressVisible(boolean progressVisible) {
-        this.progressVisible = progressVisible;
-    }
+//    public void setProgressVisible(boolean progressVisible) {
+//        this.progressVisible = progressVisible;
+//    }
 }

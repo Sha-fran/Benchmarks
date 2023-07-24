@@ -23,13 +23,8 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
     }
 
     public void setItems(List<DataBox> items) {
-        if (this.items.isEmpty()) {
-            this.items.addAll(items);
-        } else {
-            for (int i = 0; i < this.items.size(); i++) {
-                this.items.set(i, items.get(i)) ;
-            }
-        }
+        this.items.clear();
+        this.items.addAll(items);
     }
 
     @NonNull
