@@ -48,21 +48,19 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
         private final ItemBenchmarkBinding binding;
-        private final ProgressBar progressBar;
 
         private BenchmarksViewHolder(ItemBenchmarkBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            progressBar = binding.progressCircularBar;
         }
         void bind(DataBox item) {
-            if (item.isProgressVisible()) {
-                progressBar.setVisibility(View.VISIBLE);
+            if (item.progressVisible) {
+                binding.progressCircularBar.setVisibility(View.VISIBLE);
             }
 
             if (item.text == 0) {
                 binding.dataBoxView.setText(String.valueOf(item.time));
-                progressBar.setVisibility(View.INVISIBLE);
+                binding.progressCircularBar.setVisibility(View.INVISIBLE);
             } else {
                 binding.dataBoxView.setText(item.text);
             }

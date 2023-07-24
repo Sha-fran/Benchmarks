@@ -35,7 +35,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private FragmentCollectionsBinding binding;
     private final char charToAction = 'a', charToSearch = 'b';
     private ExecutorService pool;
-    private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 
 
     @Override
@@ -122,7 +122,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public boolean statusCheck() {
         for (DataBox item : adapter.getItems()) {
-            if (item.isProgressVisible()) {
+            if (item.progressVisible) {
                 return true;
             }
         }
@@ -130,514 +130,310 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void calculations(int amountOfCalculation) {
-        List<DataBox> benchmarkItems = new ArrayList<>(adapter.getItems());
+        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
+        adapter.setItems(benchmarkItems);
+        int index = 0;
 
-        if (NUMBER_OF_CORES == 1) {
-            pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
-        } else {
-            pool = Executors.newFixedThreadPool(NUMBER_OF_CORES - 1);
-        }
+        pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
         for (DataBox item : benchmarkItems) {
+            int currentlIndex = index;
             pool.submit(() -> {
-                measure(item, amountOfCalculation);
+                DataBox dataBox = new DataBox(0, (int) measure(item, amountOfCalculation), false);
+                adapter.getItems().set(currentlIndex, dataBox);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemChanged(currentlIndex);
+                    }
+                });
             });
+            index++;
         };
         pool.shutdown();
     }
 
-    public void measure(DataBox item, int amountOfCalculation) {
+    public long measure(DataBox item, int amountOfCalculation) {
 
         if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
-            addingInTheBeginningOfArrayList(amountOfCalculation);
+            return addingInTheBeginningOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
-            addingInTheMiddleOfArrayList(amountOfCalculation);
+            return addingInTheMiddleOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
-            addingInTheEndOfArrayList(amountOfCalculation);
+            return addingInTheEndOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.search_by_value_from_arrayList) {
-            searchByValueFromArrayList(amountOfCalculation);
+            return searchByValueFromArrayList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
-            removingInTheBeginningOfArrayList(amountOfCalculation);
+            return removingInTheBeginningOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
-            removingInTheMiddleOfArrayList(amountOfCalculation);
+            return removingInTheMiddleOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
-            removingInTheEndOfArrayList(amountOfCalculation);
+            return removingInTheEndOfArrayList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
-            addingInTheBeginningOfLinkedList(amountOfCalculation);
+            return addingInTheBeginningOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
-            addingInTheMiddleOfLinkedList(amountOfCalculation);
+            return addingInTheMiddleOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
-            addingInTheEndOfLinkedList(amountOfCalculation);
+            return addingInTheEndOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.search_by_value_from_linkedList) {
             searchByValueFromLinkedList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
             removingInTheBeginningOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
-            removingInTheMiddleOfLinkedList(amountOfCalculation);
+            return removingInTheMiddleOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
-            removingInTheEndOfLinkedList(amountOfCalculation);
+            return removingInTheEndOfLinkedList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
-            addingInTheBeginningOfCopyrightableList(amountOfCalculation);
+            return addingInTheBeginningOfCopyrightableList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
-            addingInTheMiddleOfCopyrightableList(amountOfCalculation);
+            return addingInTheMiddleOfCopyrightableList(amountOfCalculation);
         } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
-            addingInTheEndOfCopyrightableList(amountOfCalculation);
+            return addingInTheEndOfCopyrightableList(amountOfCalculation);
         } else if (item.text == R.string.search_by_value_from_copyrightableList) {
-            searchByValueFromCopyrightableList(amountOfCalculation);
+            return searchByValueFromCopyrightableList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
-            removingInTheBeginningOfCopyrightableList(amountOfCalculation);
+            return removingInTheBeginningOfCopyrightableList(amountOfCalculation);
         } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
-            removingInTheMiddleOfCopyrightableList(amountOfCalculation);
-        } else {
-            removingInTheEndOfCopyrightableList(amountOfCalculation);
+            return removingInTheMiddleOfCopyrightableList(amountOfCalculation);
         }
+
+        return removingInTheEndOfCopyrightableList(amountOfCalculation);
     }
 
-    public void addingInTheBeginningOfArrayList(int amountOfOperations) {
+    public long addingInTheBeginningOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>();
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.add(charToAction);
         }
-
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(0, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(0);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheMiddleOfArrayList(int amountOfOperations) {
+    public long addingInTheMiddleOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.add(arrayList.size() / 2, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(1, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(1);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheEndOfArrayList(int amountOfOperations) {
+    public long addingInTheEndOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.add(arrayList.size() - 1, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(2, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(2);
-            }
-        });
+        return  System.currentTimeMillis() - startTime;
     }
 
-    public void searchByValueFromArrayList(int amountOfOperations) {
+    public long searchByValueFromArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             if (arrayList.get(i) == charToSearch) {
-                return;
+                return System.currentTimeMillis() - startTime;
             }
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(3, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(3);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheBeginningOfArrayList(int amountOfOperations) {
+    public long removingInTheBeginningOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.remove(0);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(4, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(4);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheMiddleOfArrayList(int amountOfOperations) {
+    public long removingInTheMiddleOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.remove(arrayList.size() / 2);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(5, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(5);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheEndOfArrayList(int amountOfOperations) {
+    public long removingInTheEndOfArrayList(int amountOfOperations) {
         List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             arrayList.remove(arrayList.size() - 1);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(6, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(6);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheBeginningOfLinkedList(int amountOfOperations) {
+    public long addingInTheBeginningOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>();
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.add(charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(7, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(7);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheMiddleOfLinkedList(int amountOfOperations) {
+    public long addingInTheMiddleOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.add(linkedList.size() / 2, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(8, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(8);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheEndOfLinkedList(int amountOfOperations) {
+    public long addingInTheEndOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.add(linkedList.size() - 1, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(9, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(9);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void searchByValueFromLinkedList(int amountOfOperations) {
+    public long searchByValueFromLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             if (linkedList.get(i) == charToSearch) {
-                return;
+                return System.currentTimeMillis() - startTime;
             }
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(10, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(10);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheBeginningOfLinkedList(int amountOfOperations) {
+    public long removingInTheBeginningOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.remove(0);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(11, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(11);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheMiddleOfLinkedList(int amountOfOperations) {
+    public long removingInTheMiddleOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.remove(linkedList.size() / 2);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(12, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(12);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheEndOfLinkedList(int amountOfOperations) {
+    public long removingInTheEndOfLinkedList(int amountOfOperations) {
         List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             linkedList.remove(linkedList.size() - 1);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(13, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(13);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheBeginningOfCopyrightableList(int amountOfOperations) {
+    public long addingInTheBeginningOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.add(charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(14, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(14);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheMiddleOfCopyrightableList(int amountOfOperations) {
+    public long addingInTheMiddleOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.add(copyOnWriteArrayList.size() / 2, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(15, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(15);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void addingInTheEndOfCopyrightableList(int amountOfOperations) {
+    public long addingInTheEndOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.add(copyOnWriteArrayList.size() - 1, charToAction);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(16, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(16);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void searchByValueFromCopyrightableList(int amountOfOperations) {
+    public long searchByValueFromCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             if (copyOnWriteArrayList.get(i) == charToSearch) {
-                return;
+                return System.currentTimeMillis() - startTime;
             }
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(17, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(17);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheBeginningOfCopyrightableList(int amountOfOperations) {
+    public long removingInTheBeginningOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.remove(0);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(18, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(18);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheMiddleOfCopyrightableList(int amountOfOperations) {
+    public long removingInTheMiddleOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.remove(copyOnWriteArrayList.size() / 2);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(19, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(19);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
-    public void removingInTheEndOfCopyrightableList(int amountOfOperations) {
+    public long removingInTheEndOfCopyrightableList(int amountOfOperations) {
         List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
         long startTime = System.currentTimeMillis();
-        long resulTime;
 
         for (int i = 0; i < amountOfOperations; i++) {
             copyOnWriteArrayList.remove(copyOnWriteArrayList.size() - 1);
         }
 
-        resulTime = System.currentTimeMillis() - startTime;
-
-        DataBox dataBox = new DataBox(0, (int) resulTime, false);
-        adapter.getItems().set(20, dataBox);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyItemChanged(20);
-            }
-        });
+        return System.currentTimeMillis() - startTime;
     }
 
     public List<Character> arrayListForSearch(int amountOfOperations) {
