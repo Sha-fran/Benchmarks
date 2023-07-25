@@ -137,71 +137,73 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
         for (DataBox item : benchmarkItems) {
-            int currentlIndex = index;
+            int currentIndex = index;
+
             pool.submit(() -> {
-                DataBox dataBox = new DataBox(0, (int) measure(item, amountOfCalculation), false);
-                adapter.getItems().set(currentlIndex, dataBox);
+                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
+                benchmarkItems.set(currentIndex, dataBox);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.notifyItemChanged(currentlIndex);
+                        adapter.setItems(new ArrayList<>(benchmarkItems));
                     }
                 });
             });
             index++;
-        };
+        }
         pool.shutdown();
     }
 
     public long measure(DataBox item, int amountOfCalculation) {
+        List<Character> arrayList = new ArrayList<>();
+        List<Character> linkedList = new LinkedList<>();
+        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
 
         if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
-            return addingInTheBeginningOfArrayList(amountOfCalculation);
+            return addingInTheBeginningOfArrayList(amountOfCalculation, arrayList);
         } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
-            return addingInTheMiddleOfArrayList(amountOfCalculation);
+            return addingInTheMiddleOfArrayList(amountOfCalculation, arrayList);
         } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
-            return addingInTheEndOfArrayList(amountOfCalculation);
+            return addingInTheEndOfArrayList(amountOfCalculation, arrayList);
         } else if (item.text == R.string.search_by_value_from_arrayList) {
-            return searchByValueFromArrayList(amountOfCalculation);
+            return searchByValueFromArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
-            return removingInTheBeginningOfArrayList(amountOfCalculation);
+            return removingInTheBeginningOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
-            return removingInTheMiddleOfArrayList(amountOfCalculation);
+            return removingInTheMiddleOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
-            return removingInTheEndOfArrayList(amountOfCalculation);
+            return removingInTheEndOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
-            return addingInTheBeginningOfLinkedList(amountOfCalculation);
+            return addingInTheBeginningOfLinkedList(amountOfCalculation, linkedList);
         } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
-            return addingInTheMiddleOfLinkedList(amountOfCalculation);
+            return addingInTheMiddleOfLinkedList(amountOfCalculation, linkedList);
         } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
-            return addingInTheEndOfLinkedList(amountOfCalculation);
+            return addingInTheEndOfLinkedList(amountOfCalculation, linkedList);
         } else if (item.text == R.string.search_by_value_from_linkedList) {
-            searchByValueFromLinkedList(amountOfCalculation);
+            searchByValueFromLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
-            removingInTheBeginningOfLinkedList(amountOfCalculation);
+            removingInTheBeginningOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
-            return removingInTheMiddleOfLinkedList(amountOfCalculation);
+            return removingInTheMiddleOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
-            return removingInTheEndOfLinkedList(amountOfCalculation);
+            return removingInTheEndOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
-            return addingInTheBeginningOfCopyrightableList(amountOfCalculation);
+            return addingInTheBeginningOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
         } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
-            return addingInTheMiddleOfCopyrightableList(amountOfCalculation);
+            return addingInTheMiddleOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
         } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
-            return addingInTheEndOfCopyrightableList(amountOfCalculation);
+            return addingInTheEndOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
         } else if (item.text == R.string.search_by_value_from_copyrightableList) {
-            return searchByValueFromCopyrightableList(amountOfCalculation);
+            return searchByValueFromCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
-            return removingInTheBeginningOfCopyrightableList(amountOfCalculation);
+            return removingInTheBeginningOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
-            return removingInTheMiddleOfCopyrightableList(amountOfCalculation);
+            return removingInTheMiddleOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         }
-
-        return removingInTheEndOfCopyrightableList(amountOfCalculation);
+        return removingInTheEndOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
     }
 
-    public long addingInTheBeginningOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>();
+    public long addingInTheBeginningOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -210,8 +212,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheMiddleOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(Arrays.asList('a', 'a'));
+    public long addingInTheMiddleOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -221,8 +222,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheEndOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(Arrays.asList('a', 'a'));
+    public long addingInTheEndOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -232,8 +232,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return  System.currentTimeMillis() - startTime;
     }
 
-    public long searchByValueFromArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
+    public long searchByValueFromArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -245,8 +244,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheBeginningOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
+    public long removingInTheBeginningOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -256,8 +254,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheMiddleOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
+    public long removingInTheMiddleOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -267,8 +264,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheEndOfArrayList(int amountOfOperations) {
-        List<Character> arrayList = new ArrayList<>(arrayListForSearch(amountOfOperations));
+    public long removingInTheEndOfArrayList(int amountOfOperations, List<Character> arrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -278,8 +274,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheBeginningOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>();
+    public long addingInTheBeginningOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -289,8 +284,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheMiddleOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(Arrays.asList('a', 'a'));
+    public long addingInTheMiddleOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -300,8 +294,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheEndOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(Arrays.asList('a', 'a'));
+    public long addingInTheEndOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -311,8 +304,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long searchByValueFromLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
+    public long searchByValueFromLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -324,8 +316,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheBeginningOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
+    public long removingInTheBeginningOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -335,8 +326,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheMiddleOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
+    public long removingInTheMiddleOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -346,8 +336,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheEndOfLinkedList(int amountOfOperations) {
-        List<Character> linkedList = new LinkedList<>(linkedListForSearch(amountOfOperations));
+    public long removingInTheEndOfLinkedList(int amountOfOperations, List<Character> linkedList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -357,8 +346,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheBeginningOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
+    public long addingInTheBeginningOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -368,8 +356,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheMiddleOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
+    public long addingInTheMiddleOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -379,8 +366,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheEndOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(Arrays.asList('a', 'a'));
+    public long addingInTheEndOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -390,8 +376,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long searchByValueFromCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
+    public long searchByValueFromCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -403,8 +388,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheBeginningOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
+    public long removingInTheBeginningOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -414,8 +398,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheMiddleOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
+    public long removingInTheMiddleOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -425,8 +408,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheEndOfCopyrightableList(int amountOfOperations) {
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>(copyOnWriteArrayListForSearch(amountOfOperations));
+    public long removingInTheEndOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {

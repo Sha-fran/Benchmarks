@@ -11,4 +11,8 @@ public class DataBox {
         this.time = time;
         this.progressVisible = progressVisible;
     }
+
+    public DataBox copyWithTime(int newTime) {
+        return new DataBox(text, newTime, progressVisible);
+    }
 }
