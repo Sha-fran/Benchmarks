@@ -23,7 +23,7 @@ public class DataBox {
         if (this == o) return true;
         if (!(o instanceof DataBox)) return false;
         DataBox dataBox = (DataBox) o;
-        return text == dataBox.text && time == dataBox.time && progressVisible == dataBox.progressVisible;
+        return Objects.equals(text, dataBox.text) && time == dataBox.time && progressVisible == dataBox.progressVisible;
     }
 
     @Override
