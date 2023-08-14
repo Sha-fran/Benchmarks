@@ -63,7 +63,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartStopFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.setItems(createBenchmarkItems(false));
+        adapter.submitList(createBenchmarkItems(false));
     }
 
     private List<DataBox> createBenchmarkItems(boolean showProgress) {
@@ -110,9 +110,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 pool.shutdownNow();
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
-                adapter.setItems(createBenchmarkItems(false));
+                adapter.submitList(createBenchmarkItems(false));
             } else {
-                adapter.setItems(createBenchmarkItems(true));
+                adapter.submitList(createBenchmarkItems(true));
                 int amountOfCalculation = Integer.parseInt(binding.textInputLayoutCollections.getText().toString());
                 calculations(amountOfCalculation);
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
@@ -131,7 +131,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public void calculations(int amountOfCalculation) {
         final List<DataBox> benchmarkItems = createBenchmarkItems(true);
-        adapter.setItems(benchmarkItems);
+        adapter.submitList(benchmarkItems);
         int index = 0;
 
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
@@ -145,7 +145,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.setItems(new ArrayList<>(benchmarkItems));
+                        adapter.submitList(new ArrayList<>(benchmarkItems));
                     }
                 });
             });
@@ -155,16 +155,12 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public long measure(DataBox item, int amountOfCalculation) {
-        List<Character> arrayList = new ArrayList<>();
-        List<Character> linkedList = new LinkedList<>();
-        List<Character> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
-
         if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
-            return addingInTheBeginningOfArrayList(amountOfCalculation, arrayList);
+            return addingInTheBeginningOfArrayList(amountOfCalculation, new ArrayList<>());
         } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
-            return addingInTheMiddleOfArrayList(amountOfCalculation, arrayList);
+            return addingInTheMiddleOfArrayList(amountOfCalculation, new ArrayList<>());
         } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
-            return addingInTheEndOfArrayList(amountOfCalculation, arrayList);
+            return addingInTheEndOfArrayList(amountOfCalculation, new ArrayList<>());
         } else if (item.text == R.string.search_by_value_from_arrayList) {
             return searchByValueFromArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
@@ -174,11 +170,11 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
             return removingInTheEndOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
-            return addingInTheBeginningOfLinkedList(amountOfCalculation, linkedList);
+            return addingInTheBeginningOfLinkedList(amountOfCalculation, new LinkedList<>());
         } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
-            return addingInTheMiddleOfLinkedList(amountOfCalculation, linkedList);
+            return addingInTheMiddleOfLinkedList(amountOfCalculation, new LinkedList<>());
         } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
-            return addingInTheEndOfLinkedList(amountOfCalculation, linkedList);
+            return addingInTheEndOfLinkedList(amountOfCalculation, new LinkedList<>());
         } else if (item.text == R.string.search_by_value_from_linkedList) {
             searchByValueFromLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
@@ -188,11 +184,11 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
             return removingInTheEndOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
-            return addingInTheBeginningOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
+            return addingInTheBeginningOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
-            return addingInTheMiddleOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
+            return addingInTheMiddleOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
-            return addingInTheEndOfCopyrightableList(amountOfCalculation, copyOnWriteArrayList);
+            return addingInTheEndOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (item.text == R.string.search_by_value_from_copyrightableList) {
             return searchByValueFromCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {

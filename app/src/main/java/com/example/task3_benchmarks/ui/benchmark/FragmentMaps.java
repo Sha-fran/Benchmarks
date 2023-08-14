@@ -60,7 +60,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         binding.buttonStartStopFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter.setItems(createBenchmarksListMaps());
+        adapter.submitList(createBenchmarksListMaps());
     }
 
     private List<Runnable> createOperationsList() {

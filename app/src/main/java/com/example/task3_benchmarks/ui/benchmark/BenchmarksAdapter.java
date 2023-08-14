@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.task3_benchmarks.databinding.ItemBenchmarkBinding;
@@ -14,17 +16,16 @@ import com.example.task3_benchmarks.models.DataBox;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.BenchmarksViewHolder> {
+public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.BenchmarksViewHolder> {
 
     private final List<DataBox> items = new ArrayList<>();
 
-    public List<DataBox> getItems() {
-        return items;
+    public BenchmarksAdapter() {
+        super(new MyDiffutilCallback());
     }
 
-    public void setItems(List<DataBox> items) {
-        this.items.clear();
-        this.items.addAll(items);
+    public List<DataBox> getItems() {
+        return items;
     }
 
     @NonNull
@@ -64,6 +65,19 @@ public class BenchmarksAdapter extends RecyclerView.Adapter<BenchmarksAdapter.Be
             } else {
                 binding.dataBoxView.setText(item.text);
             }
+        }
+    }
+
+    public static class MyDiffutilCallback extends DiffUtil.ItemCallback<DataBox> {
+
+        @Override
+        public boolean areItemsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
+            return oldItem.text == newItem.text;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

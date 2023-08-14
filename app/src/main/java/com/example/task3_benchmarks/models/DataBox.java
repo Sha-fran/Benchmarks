@@ -15,4 +15,12 @@ public class DataBox {
     public DataBox copyWithTime(int newTime) {
         return new DataBox(text, newTime, progressVisible);
     }
+
+    public boolean equals(DataBox dataBox) {
+        if (dataBox == null) {
+            return false;
+        }
+
+        return this.text == dataBox.text && this.time == dataBox.time && this.progressVisible == dataBox.progressVisible;
+    }
 }
