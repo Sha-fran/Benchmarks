@@ -3,7 +3,6 @@ package com.example.task3_benchmarks.ui.benchmark;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -13,19 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.task3_benchmarks.databinding.ItemBenchmarkBinding;
 import com.example.task3_benchmarks.models.DataBox;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.BenchmarksViewHolder> {
 
-    private final List<DataBox> items = new ArrayList<>();
-
     public BenchmarksAdapter() {
-        super(new MyDiffutilCallback());
-    }
-
-    public List<DataBox> getItems() {
-        return items;
+        super(new BenchmarksDiffutilCallback());
     }
 
     @NonNull
@@ -38,12 +28,7 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
 
     @Override
     public void onBindViewHolder(@NonNull BenchmarksViewHolder holder, int position) {
-        holder.bind(items.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return items.size();
+        holder.bind(getItem(position));
     }
 
 
@@ -59,7 +44,7 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
                 binding.progressCircularBar.setVisibility(View.VISIBLE);
             }
 
-            if (item.text == 0) {
+            if (item.time >= 0) {
                 binding.dataBoxView.setText(String.valueOf(item.time));
                 binding.progressCircularBar.setVisibility(View.INVISIBLE);
             } else {
@@ -68,11 +53,10 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
         }
     }
 
-    public static class MyDiffutilCallback extends DiffUtil.ItemCallback<DataBox> {
-
+    public static class BenchmarksDiffutilCallback extends DiffUtil.ItemCallback<DataBox> {
         @Override
         public boolean areItemsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
-            return oldItem.text == newItem.text;
+            return oldItem.hashCode() == newItem.hashCode();
         }
 
         @Override

@@ -1,12 +1,14 @@
 package com.example.task3_benchmarks.models;
 
+import java.util.Objects;
+
 public class DataBox {
 
-    public final int text;
+    public final String text;
     public final int time;
     public final boolean progressVisible;
 
-    public DataBox(int text, int time, boolean progressVisible) {
+    public DataBox(String text, int time, boolean progressVisible) {
         this.text = text;
         this.time = time;
         this.progressVisible = progressVisible;
@@ -16,11 +18,16 @@ public class DataBox {
         return new DataBox(text, newTime, progressVisible);
     }
 
-    public boolean equals(DataBox dataBox) {
-        if (dataBox == null) {
-            return false;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DataBox)) return false;
+        DataBox dataBox = (DataBox) o;
+        return text == dataBox.text && time == dataBox.time && progressVisible == dataBox.progressVisible;
+    }
 
-        return this.text == dataBox.text && this.time == dataBox.time && this.progressVisible == dataBox.progressVisible;
+    @Override
+    public int hashCode() {
+        return Objects.hash(text, time, progressVisible);
     }
 }

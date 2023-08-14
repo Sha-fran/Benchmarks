@@ -94,7 +94,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(textArrayCollections[i], (int) System.currentTimeMillis(), showProgress);
+            DataBox dataBox = new DataBox(getString(textArrayCollections[i]), -1, showProgress);
             list.add(dataBox);
         }
 
@@ -106,32 +106,21 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         if (view == binding.textInputLayoutCollections) {
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
-            if (statusCheck()) {
+            if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
+                adapter.submitList(createBenchmarkItems(true));
+                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
+                binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
+            } else {
                 pool.shutdownNow();
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
                 adapter.submitList(createBenchmarkItems(false));
-            } else {
-                adapter.submitList(createBenchmarkItems(true));
-                int amountOfCalculation = Integer.parseInt(binding.textInputLayoutCollections.getText().toString());
-                calculations(amountOfCalculation);
-                binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             }
         }
-    }
-
-    public boolean statusCheck() {
-        for (DataBox item : adapter.getItems()) {
-            if (item.progressVisible) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void calculations(int amountOfCalculation) {
-        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
-        adapter.submitList(benchmarkItems);
+        final List<DataBox> benchmarkItems = adapter.getCurrentList();
         int index = 0;
 
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
@@ -140,7 +129,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             int currentIndex = index;
 
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
+                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
                 benchmarkItems.set(currentIndex, dataBox);
                 handler.post(new Runnable() {
                     @Override
@@ -154,46 +143,46 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         pool.shutdown();
     }
 
-    public long measure(DataBox item, int amountOfCalculation) {
-        if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
+    public long measure(String itemText, int amountOfCalculation) {
+        if (itemText.equals(getString(R.string.adding_in_the_beginning_of_arrayList))) {
             return addingInTheBeginningOfArrayList(amountOfCalculation, new ArrayList<>());
-        } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_arrayList))) {
             return addingInTheMiddleOfArrayList(amountOfCalculation, new ArrayList<>());
-        } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_end_of_arrayList))) {
             return addingInTheEndOfArrayList(amountOfCalculation, new ArrayList<>());
-        } else if (item.text == R.string.search_by_value_from_arrayList) {
+        } else if (itemText.equals(getString(R.string.search_by_value_from_arrayList))) {
             return searchByValueFromArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_arrayList))) {
             return removingInTheBeginningOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList)) ) {
             return removingInTheMiddleOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_end_of_arrayList))) {
             return removingInTheEndOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_linkedList))) {
             return addingInTheBeginningOfLinkedList(amountOfCalculation, new LinkedList<>());
-        } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_linkedList))) {
             return addingInTheMiddleOfLinkedList(amountOfCalculation, new LinkedList<>());
-        } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_end_of_linkedList))) {
             return addingInTheEndOfLinkedList(amountOfCalculation, new LinkedList<>());
-        } else if (item.text == R.string.search_by_value_from_linkedList) {
+        } else if (itemText.equals(getString(R.string.search_by_value_from_linkedList))) {
             searchByValueFromLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_linkedlist))) {
             removingInTheBeginningOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_linkedlist))) {
             return removingInTheMiddleOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_end_of_linkedlist))) {
             return removingInTheEndOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_copyrightableList))) {
             return addingInTheBeginningOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
-        } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_copyrightableList))) {
             return addingInTheMiddleOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
-        } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.adding_in_the_end_of_copyrightableList))) {
             return addingInTheEndOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
-        } else if (item.text == R.string.search_by_value_from_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.search_by_value_from_copyrightableList))) {
             return searchByValueFromCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_copyrightableList))) {
             return removingInTheBeginningOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
-        } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_copyrightableList))) {
             return removingInTheMiddleOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         }
         return removingInTheEndOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
