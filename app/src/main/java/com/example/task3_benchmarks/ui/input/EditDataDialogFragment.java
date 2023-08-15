@@ -43,8 +43,7 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
     @Override
     public void onClick(View view) {
         try {
-            String enteredAmountOfOperations = Objects.requireNonNull(binding.enterANumber.getText()).toString();
-
+            final String enteredAmountOfOperations = Objects.requireNonNull(binding.enterANumber.getText()).toString();
             if (enteredAmountOfOperations.isEmpty()) {
                 binding.enterANumber.setError(getString(R.string.imput_is_empty_please));
             } else if (hasNonDigits(enteredAmountOfOperations)) {

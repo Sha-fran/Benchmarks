@@ -151,7 +151,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             return searchByValueFromArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_arrayList))) {
             return removingInTheBeginningOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList)) ) {
+        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList))) {
             return removingInTheMiddleOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_end_of_arrayList))) {
             return removingInTheEndOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.task3_benchmarks.R;
@@ -22,12 +21,9 @@ import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,8 +61,8 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         adapter.submitList(createBenchmarkItems(false));
     }
 
-    private ArrayList<DataBox> createBenchmarkItems(boolean showProgress) {
-        final ArrayList<DataBox> list = new ArrayList<>();
+    private List<DataBox> createBenchmarkItems(boolean showProgress) {
+        final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayMaps = {
                 R.string.adding_new_in_treemap,
@@ -77,8 +73,8 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
                 R.string.removing_from_hashmap
         };
 
-        for (int i = 0; i < textArrayMaps.length; i++) {
-            DataBox dataBox = new DataBox(getString(textArrayMaps[i]), -1, showProgress);
+        for (int textArrayMap : textArrayMaps) {
+            DataBox dataBox = new DataBox(getString(textArrayMap), -1, showProgress);
             list.add(dataBox);
         }
         return list;
