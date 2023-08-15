@@ -15,7 +15,17 @@ import com.example.task3_benchmarks.models.DataBox;
 public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.BenchmarksViewHolder> {
 
     public BenchmarksAdapter() {
-        super(new BenchmarksDiffutilCallback());
+        super(new DiffUtil.ItemCallback<DataBox>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
+                return oldItem.hashCode() == newItem.hashCode();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
+                return oldItem.equals(newItem);
+            }
+        });
     }
 
     @NonNull
@@ -39,6 +49,7 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
             super(binding.getRoot());
             this.binding = binding;
         }
+
         void bind(DataBox item) {
             if (item.progressVisible) {
                 binding.progressCircularBar.setVisibility(View.VISIBLE);
@@ -50,18 +61,6 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
             } else {
                 binding.dataBoxView.setText(item.text);
             }
-        }
-    }
-
-    public static class BenchmarksDiffutilCallback extends DiffUtil.ItemCallback<DataBox> {
-        @Override
-        public boolean areItemsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
-            return oldItem.hashCode() == newItem.hashCode();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
-            return oldItem.equals(newItem);
         }
     }
 }

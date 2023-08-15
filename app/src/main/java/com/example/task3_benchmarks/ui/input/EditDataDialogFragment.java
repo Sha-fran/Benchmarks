@@ -25,6 +25,7 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
     public static EditDataDialogFragment newInstance() {
         return new EditDataDialogFragment();
     }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle saveInstanceState) {

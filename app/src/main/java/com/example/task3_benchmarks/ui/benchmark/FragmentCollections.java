@@ -6,6 +6,7 @@ import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.RESUL
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -42,9 +42,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS,
-                this, (requestKey, result) -> {
-                    binding.textInputLayoutCollections.setText(Integer.toString(result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS)));
-                }
+                this,
+                (requestKey, result) -> binding.textInputLayoutCollections.setText(
+                        Integer.toString(result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS))
+                )
         );
     }
 
@@ -93,8 +94,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 R.string.removing_in_the_end_of_copyrightableList
         };
 
-        for (int i = 0; i < textArrayCollections.length; i++) {
-            DataBox dataBox = new DataBox(getString(textArrayCollections[i]), -1, showProgress);
+        for (int textArrayCollection : textArrayCollections) {
+            DataBox dataBox = new DataBox(getString(textArrayCollection), -1, showProgress);
             list.add(dataBox);
         }
 
@@ -102,7 +103,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void onClick(View view) {
-
         if (view == binding.textInputLayoutCollections) {
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
@@ -126,16 +126,13 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
         for (DataBox item : benchmarkItems) {
-            int currentIndex = index;
-
+            final int currentIndex = index;
             pool.submit(() -> {
                 DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
                 benchmarkItems.set(currentIndex, dataBox);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.submitList(new ArrayList<>(benchmarkItems));
-                    }
+                handler.post(() -> {
+                    Log.d("LOGG", "Item update " + currentIndex);
+                    adapter.submitList(new ArrayList<>(benchmarkItems));
                 });
             });
             index++;
