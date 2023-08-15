@@ -5,7 +5,7 @@ import java.util.Objects;
 public class DataBox {
 
     public final String text;
-    public final int time;
+    public final long time;
     public final boolean progressVisible;
 
     public DataBox(String text, int time, boolean progressVisible) {
@@ -23,7 +23,7 @@ public class DataBox {
         if (this == o) return true;
         if (!(o instanceof DataBox)) return false;
         DataBox dataBox = (DataBox) o;
-        return text == dataBox.text && time == dataBox.time && progressVisible == dataBox.progressVisible;
+        return Objects.equals(text, dataBox.text) && time == dataBox.time && progressVisible == dataBox.progressVisible;
     }
 
     @Override

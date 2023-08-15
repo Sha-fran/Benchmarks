@@ -4,6 +4,8 @@ import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.ENTER
 import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.RESULT_OF_AMOUNT_OF_OPERATIONS;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,30 +23,29 @@ import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FragmentMaps extends Fragment implements View.OnClickListener {
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentCollectionsBinding binding;
-    final char charToAction = 'a';
-    private int amountOfOperations;
-    final List<Runnable> operationsList = new ArrayList<>();
-    List<Character> arrayList = new ArrayList<>();
-    List<Character> arrayList1 = new ArrayList<>(Arrays.asList('a', 'a'));
-    List<Character> arrayList2 = new ArrayList<>(Arrays.asList('a', 'a'));
-    int index = 0;
+    private ExecutorService pool;
+    private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS, this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                amountOfOperations = result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS);
-                binding.textInputLayoutCollections.setText(Integer.toString(amountOfOperations));
-            }
-        });
+        getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS,
+                this, (requestKey, result) -> {
+                    binding.textInputLayoutCollections.setText(Integer.toString(result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS)));
+                }
+        );
     }
 
     @Override
@@ -56,27 +57,16 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        binding.buttonStartStopFragmentsCollections.setText(R.string.start);
         binding.buttonStartStopFragmentsCollections.setOnClickListener(this);
+        binding.textInputLayoutCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter.submitList(createBenchmarksListMaps());
+        adapter.submitList(createBenchmarkItems(false));
     }
 
-    private List<Runnable> createOperationsList() {
-        final List<Runnable> opList = new ArrayList<>();
-
-        opList.add(() -> arrayList.add(index, charToAction));
-        opList.add(() -> arrayList1.add(arrayList.size() / 2, charToAction));
-        opList.add(() -> arrayList2.add(arrayList2.size() - 1, charToAction));
-
-        return opList;
-    }
-
-    private ArrayList<DataBox> createBenchmarksListMaps() {
+    private ArrayList<DataBox> createBenchmarkItems(boolean showProgress) {
         final ArrayList<DataBox> list = new ArrayList<>();
-
-        final List<Runnable> operations = new ArrayList<>(createOperationsList());
 
         final int[] textArrayMaps = {
                 R.string.adding_new_in_treemap,
@@ -88,7 +78,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
         };
 
         for (int i = 0; i < textArrayMaps.length; i++) {
-            DataBox dataBox = new DataBox(getString(textArrayMaps[i]), (int) System.currentTimeMillis(), false);
+            DataBox dataBox = new DataBox(getString(textArrayMaps[i]), -1, showProgress);
             list.add(dataBox);
         }
         return list;
@@ -96,6 +86,129 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+        if (view == binding.textInputLayoutCollections) {
+            EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
+        } else if (view == binding.buttonStartStopFragmentsCollections) {
+            if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
+                adapter.submitList(createBenchmarkItems(true));
+                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
+                binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
+            } else {
+                pool.shutdownNow();
+                pool = null;
+                binding.buttonStartStopFragmentsCollections.setText(R.string.start);
+                adapter.submitList(createBenchmarkItems(false));
+            }
+        }
     }
+
+    public void calculations(int amountOfCalculation) {
+        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
+        int index = 0;
+
+        pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
+
+        for (DataBox item : benchmarkItems) {
+            int currentIndex = index;
+
+            pool.submit(() -> {
+                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
+                benchmarkItems.set(currentIndex, dataBox);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.submitList(new ArrayList<>(benchmarkItems));
+                    }
+                });
+            });
+            index++;
+        }
+        pool.shutdown();
+    }
+
+    public long measure(String itemText, int amountOfCalculation) {
+        if (itemText.equals(getString(R.string.adding_new_in_treemap))) {
+            return addingNewInTreeMap(amountOfCalculation, new TreeMap<>());
+        } else if (itemText.equals(getString(R.string.search_by_key_in_treemap))) {
+            return searchByKeyInTreeMap(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+        } else if (itemText.equals(getString(R.string.removing_from_treemap))) {
+            return removingFromTreeMap(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+        } else if (itemText.equals(getString(R.string.adding_new_in_hashmap))) {
+            return addingNewInHashMap(amountOfCalculation, new HashMap<>());
+        } else if (itemText.equals(getString(R.string.search_by_key_in_hashmap))) {
+            return searchByKeyInHashMap(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+        }
+        return removingFromHashmap(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+    }
+
+    public long addingNewInTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < amountOfOperations; i++) {
+            treeMap.put(i, 'a');
+        }
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public long searchByKeyInTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+        long startTime = System.currentTimeMillis();
+
+        treeMap.get(amountOfOperations - 1);
+
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public long removingFromTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < amountOfOperations; i++) {
+            treeMap.remove(i);
+        }
+
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public long addingNewInHashMap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < amountOfOperations; i++) {
+            hashMap.put(i, 'a');
+        }
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public long searchByKeyInHashMap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
+        long startTime = System.currentTimeMillis();
+
+        hashMap.get(amountOfOperations - 1);
+
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public long removingFromHashmap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < amountOfOperations; i++) {
+            hashMap.remove(i);
+        }
+
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public HashMap<Integer, Character> hashMapForSearch(int amountOfOperations, HashMap<Integer, Character> hashMap) {
+        for (int i = 0; i < amountOfOperations; i++) {
+            hashMap.put(i, 'a');
+        }
+
+        return hashMap;
+    }
+
+    public TreeMap<Integer, Character> treeMapForSearch(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+        for (int i = 0; i < amountOfOperations; i++) {
+            treeMap.put(i, 'a');
+        }
+
+        return treeMap;
+    }
+
 }

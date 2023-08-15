@@ -120,7 +120,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     public void calculations(int amountOfCalculation) {
-        final List<DataBox> benchmarkItems = adapter.getCurrentList();
+        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
         int index = 0;
 
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
@@ -431,5 +431,12 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         }
 
         return cWALFS;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getParentFragmentManager().clearFragmentResultListener(RESULT_OF_AMOUNT_OF_OPERATIONS);
+        binding = null;
     }
 }

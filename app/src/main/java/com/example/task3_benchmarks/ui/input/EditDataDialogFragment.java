@@ -2,6 +2,7 @@ package com.example.task3_benchmarks.ui.input;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -40,22 +41,26 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        String enteredAmountOfOperations = Objects.requireNonNull(binding.enterANumber.getText()).toString();
+        try {
+            String enteredAmountOfOperations = Objects.requireNonNull(binding.enterANumber.getText()).toString();
 
-        if (enteredAmountOfOperations.isEmpty()) {
-            binding.enterANumber.setError(getString(R.string.imput_is_empty_please));
-        } else if (hasNonDigits(enteredAmountOfOperations)) {
-            binding.enterANumber.setError(getString(R.string.you_need_enter_digit_symbols_only));
-        } else {
-            int amountOfOperations = Integer.parseInt(enteredAmountOfOperations);
-            if (amountOfOperations <= 0) {
-                binding.enterANumber.setError(getString(R.string.please_enter_amount_of_operations_0));
+            if (enteredAmountOfOperations.isEmpty()) {
+                binding.enterANumber.setError(getString(R.string.imput_is_empty_please));
+            } else if (hasNonDigits(enteredAmountOfOperations)) {
+                binding.enterANumber.setError(getString(R.string.you_need_enter_digit_symbols_only));
             } else {
-                final Bundle result = new Bundle();
-                result.putInt(RESULT_OF_AMOUNT_OF_OPERATIONS, amountOfOperations);
-                getParentFragmentManager().setFragmentResult(ENTER_AMOUNT_OF_OPERATIONS, result);
-                dismiss();
+                int amountOfOperations = Integer.parseInt(enteredAmountOfOperations);
+                if (amountOfOperations <= 0) {
+                    binding.enterANumber.setError(getString(R.string.please_enter_amount_of_operations_0));
+                } else {
+                    final Bundle result = new Bundle();
+                    result.putInt(RESULT_OF_AMOUNT_OF_OPERATIONS, amountOfOperations);
+                    getParentFragmentManager().setFragmentResult(ENTER_AMOUNT_OF_OPERATIONS, result);
+                    dismiss();
+                }
             }
+        } catch (NumberFormatException e) {
+            Log.d("InputData", "Invalid Amount of operation");
         }
     }
 
