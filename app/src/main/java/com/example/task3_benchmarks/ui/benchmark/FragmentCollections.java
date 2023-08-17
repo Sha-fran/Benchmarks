@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FragmentCollections extends Fragment implements View.OnClickListener {
+public class FragmentCollections extends Fragment implements View.OnClickListener, OperationsCollections {
 
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -142,83 +142,88 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public long measure(String itemText, int amountOfCalculation) {
         if (itemText.equals(getString(R.string.adding_in_the_beginning_of_arrayList))) {
-            return addingInTheBeginningOfArrayList(amountOfCalculation, new ArrayList<>());
+            return addingInTheBeginning(amountOfCalculation, new ArrayList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_arrayList))) {
-            return addingInTheMiddleOfArrayList(amountOfCalculation, new ArrayList<>());
+            return addingInTheMiddle(amountOfCalculation, new ArrayList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_arrayList))) {
-            return addingInTheEndOfArrayList(amountOfCalculation, new ArrayList<>());
+            return addingInTheEnd(amountOfCalculation, new ArrayList<>());
         } else if (itemText.equals(getString(R.string.search_by_value_from_arrayList))) {
-            return searchByValueFromArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return searchByValue(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_arrayList))) {
-            return removingInTheBeginningOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList))) {
-            return removingInTheMiddleOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return removingInTheBeginning(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+        } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList)) ) {
+            return removingInTheMiddle(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_end_of_arrayList))) {
-            return removingInTheEndOfArrayList(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return removingInTheEnd(amountOfCalculation, arrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_linkedList))) {
-            return addingInTheBeginningOfLinkedList(amountOfCalculation, new LinkedList<>());
+            return addingInTheBeginning(amountOfCalculation, new LinkedList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_linkedList))) {
-            return addingInTheMiddleOfLinkedList(amountOfCalculation, new LinkedList<>());
+            return addingInTheMiddle(amountOfCalculation, new LinkedList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_linkedList))) {
-            return addingInTheEndOfLinkedList(amountOfCalculation, new LinkedList<>());
+            return addingInTheEnd(amountOfCalculation, new LinkedList<>());
         } else if (itemText.equals(getString(R.string.search_by_value_from_linkedList))) {
-            searchByValueFromLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            searchByValue(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_linkedlist))) {
-            removingInTheBeginningOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            removingInTheBeginning(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_linkedlist))) {
-            return removingInTheMiddleOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            return removingInTheMiddle(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_end_of_linkedlist))) {
-            return removingInTheEndOfLinkedList(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            return removingInTheEnd(amountOfCalculation, linkedListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_copyrightableList))) {
-            return addingInTheBeginningOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheBeginning(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_copyrightableList))) {
-            return addingInTheMiddleOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheMiddle(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_copyrightableList))) {
-            return addingInTheEndOfCopyrightableList(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheEnd(amountOfCalculation, new CopyOnWriteArrayList<>());
         } else if (itemText.equals(getString(R.string.search_by_value_from_copyrightableList))) {
-            return searchByValueFromCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return searchByValue(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_copyrightableList))) {
-            return removingInTheBeginningOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_copyrightableList))) {
-            return removingInTheMiddleOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
         }
-        return removingInTheEndOfCopyrightableList(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+        return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
     }
 
-    public long addingInTheBeginningOfArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long addingInTheBeginning(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.add(charToAction);
-        }
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheMiddleOfArrayList(int amountOfOperations, List<Character> arrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.add(arrayList.size() / 2, charToAction);
+            list.add(charToAction);
         }
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheEndOfArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long addingInTheMiddle(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.add(arrayList.size() - 1, charToAction);
+            list.add(list.size() / 2, charToAction);
         }
 
-        return  System.currentTimeMillis() - startTime;
+        return System.currentTimeMillis() - startTime;
     }
 
-    public long searchByValueFromArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long addingInTheEnd(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            if (arrayList.get(i) == charToSearch) {
+            list.add(list.size() - 1, charToAction);
+        }
+
+        return System.currentTimeMillis() - startTime;
+    }
+
+    @Override
+    public long searchByValue(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < amountOfOperations; i++) {
+            if (list.get(i) == charToSearch) {
                 return System.currentTimeMillis() - startTime;
             }
         }
@@ -226,179 +231,40 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheBeginningOfArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long removingInTheBeginning(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.remove(0);
+            list.remove(0);
         }
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheMiddleOfArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long removingInTheMiddle(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.remove(arrayList.size() / 2);
+            list.remove(list.size() / 2);
         }
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingInTheEndOfArrayList(int amountOfOperations, List<Character> arrayList) {
+    @Override
+    public long removingInTheEnd(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            arrayList.remove(arrayList.size() - 1);
+            list.remove(list.size() - 1);
         }
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingInTheBeginningOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.add(charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheMiddleOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.add(linkedList.size() / 2, charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheEndOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.add(linkedList.size() - 1, charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long searchByValueFromLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            if (linkedList.get(i) == charToSearch) {
-                return System.currentTimeMillis() - startTime;
-            }
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheBeginningOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.remove(0);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheMiddleOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.remove(linkedList.size() / 2);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheEndOfLinkedList(int amountOfOperations, List<Character> linkedList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            linkedList.remove(linkedList.size() - 1);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheBeginningOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.add(charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheMiddleOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.add(copyOnWriteArrayList.size() / 2, charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long addingInTheEndOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.add(copyOnWriteArrayList.size() - 1, charToAction);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long searchByValueFromCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            if (copyOnWriteArrayList.get(i) == charToSearch) {
-                return System.currentTimeMillis() - startTime;
-            }
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheBeginningOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.remove(0);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheMiddleOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.remove(copyOnWriteArrayList.size() / 2);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingInTheEndOfCopyrightableList(int amountOfOperations, List<Character> copyOnWriteArrayList) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            copyOnWriteArrayList.remove(copyOnWriteArrayList.size() - 1);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
 
     public List<Character> arrayListForSearch(int amountOfOperations) {
         List<Character> aLFS = new ArrayList<>();
