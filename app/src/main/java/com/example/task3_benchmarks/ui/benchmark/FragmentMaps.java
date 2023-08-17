@@ -26,12 +26,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FragmentMaps extends Fragment implements View.OnClickListener {
+public class FragmentMaps extends Fragment implements View.OnClickListener, OperationsMaps {
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentCollectionsBinding binding;
@@ -128,72 +129,49 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
 
     public long measure(String itemText, int amountOfCalculation) {
         if (itemText.equals(getString(R.string.adding_new_in_treemap))) {
-            return addingNewInTreeMap(amountOfCalculation, new TreeMap<>());
+            return addingNew(amountOfCalculation, new TreeMap<>());
         } else if (itemText.equals(getString(R.string.search_by_key_in_treemap))) {
-            return searchByKeyInTreeMap(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+            return searchByKey(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
         } else if (itemText.equals(getString(R.string.removing_from_treemap))) {
-            return removingFromTreeMap(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+            return removing(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
         } else if (itemText.equals(getString(R.string.adding_new_in_hashmap))) {
-            return addingNewInHashMap(amountOfCalculation, new HashMap<>());
+            return addingNew(amountOfCalculation, new HashMap<>());
         } else if (itemText.equals(getString(R.string.search_by_key_in_hashmap))) {
-            return searchByKeyInHashMap(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+            return searchByKey(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
         }
-        return removingFromHashmap(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+        return removing(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
     }
 
-    public long addingNewInTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+    @Override
+    public long addingNew(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            treeMap.put(i, 'a');
+            map.put(i, 'a');
         }
         return System.currentTimeMillis() - startTime;
     }
 
-    public long searchByKeyInTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+    @Override
+    public long searchByKey(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
-        treeMap.get(amountOfOperations - 1);
+        map.get(amountOfOperations - 1);
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long removingFromTreeMap(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
+    @Override
+    public long removing(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
-            treeMap.remove(i);
+            map.remove(i);
         }
 
         return System.currentTimeMillis() - startTime;
     }
 
-    public long addingNewInHashMap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            hashMap.put(i, 'a');
-        }
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long searchByKeyInHashMap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
-        long startTime = System.currentTimeMillis();
-
-        hashMap.get(amountOfOperations - 1);
-
-        return System.currentTimeMillis() - startTime;
-    }
-
-    public long removingFromHashmap(int amountOfOperations, HashMap<Integer, Character> hashMap) {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            hashMap.remove(i);
-        }
-
-        return System.currentTimeMillis() - startTime;
-    }
 
     public HashMap<Integer, Character> hashMapForSearch(int amountOfOperations, HashMap<Integer, Character> hashMap) {
         for (int i = 0; i < amountOfOperations; i++) {
@@ -210,5 +188,4 @@ public class FragmentMaps extends Fragment implements View.OnClickListener {
 
         return treeMap;
     }
-
 }
