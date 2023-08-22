@@ -107,7 +107,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
             if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
-                adapter.submitList(createBenchmarkItems(true));
                 calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             } else {
@@ -121,21 +120,20 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public void calculations(int amountOfCalculation) {
         final List<DataBox> benchmarkItems = createBenchmarkItems(true);
-        int index = 0;
-
+        adapter.submitList(new ArrayList<>(benchmarkItems));
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
-        for (DataBox item : benchmarkItems) {
-            final int currentIndex = index;
+        for (int i = 0; i < benchmarkItems.size(); i++) {
+            final int index = i;
+            final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
                 DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
-                benchmarkItems.set(currentIndex, dataBox);
+                benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
-                    Log.d("LOGG", "Item update " + currentIndex);
+                    Log.d("LOGG", "Item update " + index);
                     adapter.submitList(new ArrayList<>(benchmarkItems));
                 });
             });
-            index++;
         }
         pool.shutdown();
     }
