@@ -125,17 +125,20 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
 
     public long measure(String itemText, int amountOfCalculation) {
         if (itemText.equals(getString(R.string.adding_new_in_treemap))) {
-            return addingNew(amountOfCalculation, new TreeMap<>());
+            return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.search_by_key_in_treemap))) {
-            return searchByKey(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+            return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_from_treemap))) {
-            return removing(amountOfCalculation, treeMapForSearch(amountOfCalculation, new TreeMap<>()));
+            return removing(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_new_in_hashmap))) {
-            return addingNew(amountOfCalculation, new HashMap<>());
+            return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.search_by_key_in_hashmap))) {
-            return searchByKey(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+            return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation));
+        } else if (itemText.equals(getString(R.string.removing_from_hashmap))) {
+            return removing(amountOfCalculation, hashMapCreation(amountOfCalculation));
         }
-        return removing(amountOfCalculation, hashMapForSearch(amountOfCalculation, new HashMap<>()));
+
+        return 0;
     }
 
     @Override
@@ -168,8 +171,19 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return System.currentTimeMillis() - startTime;
     }
 
+    public TreeMap<Integer, Character> treeMapCreation(int amountOfOperations) {
+        TreeMap<Integer, Character> treeMap = new TreeMap<>();
 
-    public HashMap<Integer, Character> hashMapForSearch(int amountOfOperations, HashMap<Integer, Character> hashMap) {
+        for (int i = 0; i < amountOfOperations; i++) {
+            treeMap.put(i, 'a');
+        }
+
+        return treeMap;
+    }
+
+    public HashMap<Integer, Character> hashMapCreation(int amountOfOperations) {
+        HashMap<Integer, Character> hashMap = new HashMap<>();
+
         for (int i = 0; i < amountOfOperations; i++) {
             hashMap.put(i, 'a');
         }
@@ -177,11 +191,15 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return hashMap;
     }
 
-    public TreeMap<Integer, Character> treeMapForSearch(int amountOfOperations, TreeMap<Integer, Character> treeMap) {
-        for (int i = 0; i < amountOfOperations; i++) {
-            treeMap.put(i, 'a');
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
-        return treeMap;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getParentFragmentManager().clearFragmentResultListener(RESULT_OF_AMOUNT_OF_OPERATIONS);
     }
 }

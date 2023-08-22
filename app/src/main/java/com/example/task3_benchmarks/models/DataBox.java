@@ -15,7 +15,7 @@ public class DataBox {
     }
 
     public DataBox copyWithTime(int newTime) {
-        return new DataBox(text, newTime, progressVisible);
+        return new DataBox(text, newTime, false);
     }
 
     @Override

@@ -142,47 +142,49 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     public long measure(String itemText, int amountOfCalculation) {
         if (itemText.equals(getString(R.string.adding_in_the_beginning_of_arrayList))) {
-            return addingInTheBeginning(amountOfCalculation, new ArrayList<>());
+            return addingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_arrayList))) {
-            return addingInTheMiddle(amountOfCalculation, new ArrayList<>());
+            return addingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_arrayList))) {
-            return addingInTheEnd(amountOfCalculation, new ArrayList<>());
+            return addingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.search_by_value_from_arrayList))) {
-            return searchByValue(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return searchByValue(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_arrayList))) {
-            return removingInTheBeginning(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return removingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_arrayList)) ) {
-            return removingInTheMiddle(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return removingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_end_of_arrayList))) {
-            return removingInTheEnd(amountOfCalculation, arrayListForSearch(amountOfCalculation));
+            return removingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_linkedList))) {
-            return addingInTheBeginning(amountOfCalculation, new LinkedList<>());
+            return addingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_linkedList))) {
-            return addingInTheMiddle(amountOfCalculation, new LinkedList<>());
+            return addingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_linkedList))) {
-            return addingInTheEnd(amountOfCalculation, new LinkedList<>());
+            return addingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.search_by_value_from_linkedList))) {
-            searchByValue(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            searchByValue(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_linkedlist))) {
-            removingInTheBeginning(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            removingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_linkedlist))) {
-            return removingInTheMiddle(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            return removingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_end_of_linkedlist))) {
-            return removingInTheEnd(amountOfCalculation, linkedListForSearch(amountOfCalculation));
+            return removingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_beginning_of_copyrightableList))) {
-            return addingInTheBeginning(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_middle_of_copyrightableList))) {
-            return addingInTheMiddle(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.adding_in_the_end_of_copyrightableList))) {
-            return addingInTheEnd(amountOfCalculation, new CopyOnWriteArrayList<>());
+            return addingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.search_by_value_from_copyrightableList))) {
-            return searchByValue(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return searchByValue(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_beginning_of_copyrightableList))) {
-            return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText.equals(getString(R.string.removing_in_the_middle_of_copyrightableList))) {
-            return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+            return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
+        } else if (itemText.equals(getString(R.string.removing_in_the_end_of_copyrightableList))) {
+            return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         }
-        return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListForSearch(amountOfCalculation));
+        return 0;
     }
 
     @Override
@@ -266,7 +268,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
 
 
-    public List<Character> arrayListForSearch(int amountOfOperations) {
+    public List<Character> arrayListCreation(int amountOfOperations) {
         List<Character> aLFS = new ArrayList<>();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -276,7 +278,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return aLFS;
     }
 
-    public List<Character> linkedListForSearch(int amountOfOperations) {
+    public List<Character> linkedListCreation(int amountOfOperations) {
         List<Character> lLFS = new LinkedList<>();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -286,7 +288,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return lLFS;
     }
 
-    public List<Character> copyOnWriteArrayListForSearch(int amountOfOperations) {
+    public List<Character> copyOnWriteArrayListCreation(int amountOfOperations) {
         List<Character> cWALFS = new CopyOnWriteArrayList<>();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -297,9 +299,14 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         getParentFragmentManager().clearFragmentResultListener(RESULT_OF_AMOUNT_OF_OPERATIONS);
-        binding = null;
     }
 }
