@@ -3,12 +3,15 @@ package com.example.task3_benchmarks.ui.benchmark;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.task3_benchmarks.R;
 import com.example.task3_benchmarks.databinding.ItemBenchmarkBinding;
 import com.example.task3_benchmarks.models.DataBox;
 
@@ -44,6 +47,8 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
         private final ItemBenchmarkBinding binding;
+        private final Animation inAnimation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_in);
+        private final Animation outAnimation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_out);
 
         private BenchmarksViewHolder(ItemBenchmarkBinding binding) {
             super(binding.getRoot());
@@ -52,10 +57,12 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
 
         void bind(DataBox item) {
             if (item.progressVisible) {
+                binding.progressCircularBar.startAnimation(inAnimation);
                 binding.progressCircularBar.setVisibility(View.VISIBLE);
             }
 
             if (item.time >= 0) {
+                binding.progressCircularBar.startAnimation(outAnimation);
                 binding.dataBoxView.setText(String.valueOf(item.time));
                 binding.progressCircularBar.setVisibility(View.INVISIBLE);
             } else {

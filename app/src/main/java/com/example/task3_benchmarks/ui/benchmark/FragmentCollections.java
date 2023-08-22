@@ -22,6 +22,7 @@ import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,7 +34,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentCollectionsBinding binding;
-    private final char charToAction = 'a', charToSearch = 'b';
+    private final char charToAction = 'a';
     private ExecutorService pool;
     private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 
@@ -223,6 +224,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < amountOfOperations; i++) {
+            char charToSearch = 'b';
             if (list.get(i) == charToSearch) {
                 return System.currentTimeMillis() - startTime;
             }
@@ -266,34 +268,16 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
 
 
-    public List<Character> arrayListCreation(int amountOfOperations) {
-        List<Character> aLFS = new ArrayList<>();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            aLFS.add(i, charToAction);
-        }
-
-        return aLFS;
+    private List<Character> arrayListCreation(int amountOfOperations) {
+        return new ArrayList<>(Collections.nCopies(amountOfOperations, charToAction));
     }
 
-    public List<Character> linkedListCreation(int amountOfOperations) {
-        List<Character> lLFS = new LinkedList<>();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            lLFS.add(i, charToAction);
-        }
-
-        return lLFS;
+    private List<Character> linkedListCreation(int amountOfOperations) {
+        return new LinkedList<>(Collections.nCopies(amountOfOperations, charToAction));
     }
 
-    public List<Character> copyOnWriteArrayListCreation(int amountOfOperations) {
-        List<Character> cWALFS = new CopyOnWriteArrayList<>();
-
-        for (int i = 0; i < amountOfOperations; i++) {
-            cWALFS.add(i, charToAction);
-        }
-
-        return cWALFS;
+    private List<Character> copyOnWriteArrayListCreation(int amountOfOperations) {
+        return new CopyOnWriteArrayList<>(Collections.nCopies(amountOfOperations, charToAction));
     }
 
     @Override

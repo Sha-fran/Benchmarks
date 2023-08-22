@@ -171,7 +171,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return System.currentTimeMillis() - startTime;
     }
 
-    public TreeMap<Integer, Character> treeMapCreation(int amountOfOperations) {
+    private TreeMap<Integer, Character> treeMapCreation(int amountOfOperations) {
         TreeMap<Integer, Character> treeMap = new TreeMap<>();
 
         for (int i = 0; i < amountOfOperations; i++) {
@@ -181,7 +181,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return treeMap;
     }
 
-    public HashMap<Integer, Character> hashMapCreation(int amountOfOperations) {
+    private HashMap<Integer, Character> hashMapCreation(int amountOfOperations) {
         HashMap<Integer, Character> hashMap = new HashMap<>();
 
         for (int i = 0; i < amountOfOperations; i++) {
