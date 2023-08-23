@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public class DataBox {
 
-    public final String text;
+    public final int text;
     public final long time;
     public final boolean progressVisible;
 
-    public DataBox(String text, int time, boolean progressVisible) {
+    public DataBox(int text, int time, boolean progressVisible) {
         this.text = text;
         this.time = time;
         this.progressVisible = progressVisible;

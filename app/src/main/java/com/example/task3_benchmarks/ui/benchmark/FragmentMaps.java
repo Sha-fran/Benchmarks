@@ -6,6 +6,7 @@ import static com.example.task3_benchmarks.ui.input.EditDataDialogFragment.RESUL
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
     private FragmentCollectionsBinding binding;
     private ExecutorService pool;
     private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+    private long initialStartTime = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,10 +61,10 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         binding.textInputLayoutCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter.submitList(createBenchmarkItems(false));
+        adapter.submitList(createBenchmarkItems(initialStartTime, false));
     }
 
-    private List<DataBox> createBenchmarkItems(boolean showProgress) {
+    private List<DataBox> createBenchmarkItems(long time, boolean showProgress) {
         final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayMaps = {
@@ -75,7 +77,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         };
 
         for (int textArrayMap : textArrayMaps) {
-            DataBox dataBox = new DataBox(getString(textArrayMap), -1, showProgress);
+            DataBox dataBox = new DataBox(textArrayMap, -1, showProgress);
             list.add(dataBox);
         }
         return list;
@@ -87,64 +89,67 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
             if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
-                adapter.submitList(createBenchmarkItems(true));
-                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
+                initialStartTime = System.currentTimeMillis();
+                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()), initialStartTime);
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             } else {
+                long stoppedTime = System.currentTimeMillis() - initialStartTime;
+                List<DataBox> items = new ArrayList<>(adapter.getCurrentList());
+
+                for (int i = 0; i < items.size(); i++) {
+                    if (items.get(i).progressVisible) {
+                        items.set(i, items.get(i).copyWithTime((int) stoppedTime));
+                    }
+                }
+
                 pool.shutdownNow();
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
-                adapter.submitList(createBenchmarkItems(false));
+                adapter.submitList(new ArrayList<>(items));
             }
         }
     }
 
-    public void calculations(int amountOfCalculation) {
-        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
-        int index = 0;
-
+    public void calculations(int amountOfCalculation, long startTime) {
+        final List<DataBox> benchmarkItems = createBenchmarkItems(startTime, true);
+        adapter.submitList(new ArrayList<>(benchmarkItems));
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
-        for (DataBox item : benchmarkItems) {
-            int currentIndex = index;
-
+        for (int i = 0; i < benchmarkItems.size(); i++) {
+            final int index = i;
+            final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
-                benchmarkItems.set(currentIndex, dataBox);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.submitList(new ArrayList<>(benchmarkItems));
-                    }
+                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation, startTime));
+                benchmarkItems.set(index, dataBox);
+                handler.post(() -> {
+                    Log.d("LOGG", "Item update " + index);
+                    adapter.submitList(new ArrayList<>(benchmarkItems));
                 });
             });
-            index++;
         }
         pool.shutdown();
     }
 
-    public long measure(String itemText, int amountOfCalculation) {
-        if (itemText.equals(getString(R.string.adding_new_in_treemap))) {
-            return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.search_by_key_in_treemap))) {
-            return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.removing_from_treemap))) {
-            return removing(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.adding_new_in_hashmap))) {
-            return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.search_by_key_in_hashmap))) {
-            return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation));
-        } else if (itemText.equals(getString(R.string.removing_from_hashmap))) {
-            return removing(amountOfCalculation, hashMapCreation(amountOfCalculation));
+    public long measure(int itemText, int amountOfCalculation, long startTime) {
+        if (itemText == R.string.adding_new_in_treemap) {
+            return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+        } else if (itemText == R.string.search_by_key_in_treemap) {
+            return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+        } else if (itemText == R.string.removing_from_treemap) {
+            return removing(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+        } else if (itemText == R.string.adding_new_in_hashmap) {
+            return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
+        } else if (itemText == R.string.search_by_key_in_hashmap) {
+            return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
+        } else if (itemText == R.string.removing_from_hashmap) {
+            return removing(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
         }
 
         return 0;
     }
 
     @Override
-    public long addingNew(int amountOfOperations, Map<Integer, Character> map) {
-        long startTime = System.currentTimeMillis();
-
+    public long addingNew(int amountOfOperations, Map<Integer, Character> map, long startTime) {
         for (int i = 0; i < amountOfOperations; i++) {
             map.put(i, 'a');
         }
@@ -152,18 +157,14 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
     }
 
     @Override
-    public long searchByKey(int amountOfOperations, Map<Integer, Character> map) {
-        long startTime = System.currentTimeMillis();
-
+    public long searchByKey(int amountOfOperations, Map<Integer, Character> map, long startTime) {
         map.get(amountOfOperations - 1);
 
         return System.currentTimeMillis() - startTime;
     }
 
     @Override
-    public long removing(int amountOfOperations, Map<Integer, Character> map) {
-        long startTime = System.currentTimeMillis();
-
+    public long removing(int amountOfOperations, Map<Integer, Character> map, long startTime) {
         for (int i = 0; i < amountOfOperations; i++) {
             map.remove(i);
         }

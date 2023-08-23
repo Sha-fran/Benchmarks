@@ -60,7 +60,7 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
                 }
             }
         } catch (NumberFormatException e) {
-            Log.d("InputData", "Invalid Amount of operation");
+            e.printStackTrace();
         }
     }
 

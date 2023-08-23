@@ -21,7 +21,7 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
         super(new DiffUtil.ItemCallback<DataBox>() {
             @Override
             public boolean areItemsTheSame(@NonNull DataBox oldItem, @NonNull DataBox newItem) {
-                return oldItem.hashCode() == newItem.hashCode();
+                return oldItem.text == newItem.text;
             }
 
             @Override
@@ -47,8 +47,6 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
 
     static class BenchmarksViewHolder extends RecyclerView.ViewHolder {
         private final ItemBenchmarkBinding binding;
-        private final Animation inAnimation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_in);
-        private final Animation outAnimation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_out);
 
         private BenchmarksViewHolder(ItemBenchmarkBinding binding) {
             super(binding.getRoot());
@@ -56,17 +54,15 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
         }
 
         void bind(DataBox item) {
-            if (item.progressVisible) {
-                binding.progressCircularBar.startAnimation(inAnimation);
-                binding.progressCircularBar.setVisibility(View.VISIBLE);
-            }
+            binding.dataBoxView.setText(item.text);
 
-            if (item.time >= 0) {
-                binding.progressCircularBar.startAnimation(outAnimation);
+            if (item.progressVisible) {
+                binding.progressCircularBar.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_in));
+                binding.progressCircularBar.setVisibility(View.VISIBLE);
+            } else if (item.time >= 0) {
+                binding.progressCircularBar.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_out));
                 binding.dataBoxView.setText(String.valueOf(item.time));
                 binding.progressCircularBar.setVisibility(View.INVISIBLE);
-            } else {
-                binding.dataBoxView.setText(item.text);
             }
         }
     }
