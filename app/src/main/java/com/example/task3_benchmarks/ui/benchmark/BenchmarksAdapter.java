@@ -1,5 +1,7 @@
 package com.example.task3_benchmarks.ui.benchmark;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +59,24 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
             binding.dataBoxView.setText(item.text);
 
             if (item.progressVisible) {
-                binding.progressCircularBar.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_in));
-                binding.progressCircularBar.setVisibility(View.VISIBLE);
+                binding.progressCircularBar.animate().alpha(1).setDuration(500).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+
+                        binding.progressCircularBar.setVisibility(View.VISIBLE);
+                    }
+                });
             } else if (item.time >= 0) {
-                binding.progressCircularBar.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.alpha_out));
-                binding.dataBoxView.setText(String.valueOf(item.time));
-                binding.progressCircularBar.setVisibility(View.INVISIBLE);
+                binding.progressCircularBar.animate().alpha(0).setDuration(500).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+
+                        binding.dataBoxView.setText(String.valueOf(item.time));
+                        binding.progressCircularBar.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
         }
     }

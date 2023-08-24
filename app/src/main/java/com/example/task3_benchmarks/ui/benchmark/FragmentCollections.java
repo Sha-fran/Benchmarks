@@ -23,8 +23,10 @@ import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,7 +39,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     private final char charToAction = 'a';
     private ExecutorService pool;
     private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
-    private long initialStartTime = -1;
+    private Map<Integer, Long> startTimeMap = new HashMap<>();
 
 
     @Override
@@ -67,10 +69,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         binding.buttonStartStopFragmentsCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
-        adapter.submitList(createBenchmarkItems(initialStartTime, false));
+        adapter.submitList(createBenchmarkItems(false));
     }
 
-    private List<DataBox> createBenchmarkItems(long time, boolean showProgress) {
+    private List<DataBox> createBenchmarkItems(boolean showProgress) {
         final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayCollections = {
@@ -98,7 +100,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int textArrayCollection : textArrayCollections) {
-            DataBox dataBox = new DataBox(textArrayCollection, (int) time, showProgress);
+            DataBox dataBox = new DataBox(textArrayCollection, -1, showProgress);
             list.add(dataBox);
         }
 
@@ -110,29 +112,27 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
             if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
-                initialStartTime = System.currentTimeMillis();
-                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()), initialStartTime);
+                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             } else {
-                long stoppedTime = System.currentTimeMillis() - initialStartTime;
-                List<DataBox> items = new ArrayList<>(adapter.getCurrentList());
-
-                for (int i = 0; i < items.size(); i++) {
-                    if (items.get(i).progressVisible) {
-                        items.set(i, items.get(i).copyWithTime((int) stoppedTime));
-                    }
-                }
-
                 pool.shutdownNow();
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
-                adapter.submitList(new ArrayList<>(items));
+                List<DataBox> list = new ArrayList<>(adapter.getCurrentList());
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).progressVisible) {
+                        DataBox dataBox = list.get(i).copyWithTime((int) list.get(i).time);
+//                        DataBox dataBox = new DataBox(list.get(i).text, (int) list.get(i).time, false);
+                        list.set(i, dataBox);
+                    }
+                }
+                adapter.submitList(list);
             }
         }
     }
 
-    public void calculations(int amountOfCalculation, long startTime) {
-        final List<DataBox> benchmarkItems = createBenchmarkItems(startTime, true);
+    public void calculations(int amountOfCalculation) {
+        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
         adapter.submitList(new ArrayList<>(benchmarkItems));
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
@@ -140,7 +140,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation, startTime));
+                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -151,56 +151,59 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         pool.shutdown();
     }
 
-    public long measure(int itemText, int amountOfCalculation, long startTime) {
+    public long measure(int itemText, int amountOfCalculation) {
         if (itemText == R.string.adding_in_the_beginning_of_arrayList) {
-            return addingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return addingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_middle_of_arrayList) {
-            return addingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return addingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_end_of_arrayList) {
-            return addingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return addingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.search_by_value_from_arrayList) {
-            return searchByValue(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return searchByValue(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_beginning_of_arrayList) {
-            return removingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return removingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_middle_of_arrayList) {
-            return removingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation), startTime);
+            return removingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_end_of_arrayList) {
-            return removingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation) , startTime);
+            return removingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_beginning_of_linkedList) {
-            return addingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            return addingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_middle_of_linkedList) {
-            return addingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            return addingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_end_of_linkedList) {
-            return addingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            return addingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.search_by_value_from_linkedList) {
-            searchByValue(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            searchByValue(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_beginning_of_linkedlist) {
-            removingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            removingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_middle_of_linkedlist) {
-            return removingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            return removingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_end_of_linkedlist) {
-            return removingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation), startTime);
+            return removingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_beginning_of_copyrightableList) {
-            return addingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return addingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_middle_of_copyrightableList) {
-            return addingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return addingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_in_the_end_of_copyrightableList) {
-            return addingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return addingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.search_by_value_from_copyrightableList) {
-            return searchByValue(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return searchByValue(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_beginning_of_copyrightableList) {
-            return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_middle_of_copyrightableList) {
-            return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_in_the_end_of_copyrightableList) {
-            return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation), startTime);
+            return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         }
 
         return 0;
     }
 
     @Override
-    public long addingInTheBeginning(int amountOfOperations, List<Character> list, long startTime) {
+    public long addingInTheBeginning(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+        startTimeMap.put(R.string.adding_in_the_beginning_of_arrayList, startTime);
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(charToAction);
         }
@@ -209,7 +212,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long addingInTheMiddle(int amountOfOperations, List<Character> list, long startTime) {
+    public long addingInTheMiddle(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+        startTimeMap.put(R.string.adding_in_the_middle_of_arrayList, startTime);
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(list.size() / 2, charToAction);
         }
@@ -218,7 +224,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long addingInTheEnd(int amountOfOperations, List<Character> list, long startTime) {
+    public long addingInTheEnd(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+        startTimeMap.put(R.string.adding_in_the_end_of_arrayList, startTime);
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(list.size() - 1, charToAction);
         }
@@ -227,7 +236,10 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long searchByValue(int amountOfOperations, List<Character> list, long startTime) {
+    public long searchByValue(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+        startTimeMap.put(R.string.search_by_value_from_arrayList, startTime);
+
         for (int i = 0; i < amountOfOperations; i++) {
             char charToSearch = 'b';
             if (list.get(i) == charToSearch) {
@@ -239,7 +251,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long removingInTheBeginning(int amountOfOperations, List<Character> list, long startTime) {
+    public long removingInTheBeginning(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.remove(0);
         }
@@ -248,7 +262,9 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long removingInTheMiddle(int amountOfOperations, List<Character> list, long startTime) {
+    public long removingInTheMiddle(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.remove(list.size() / 2);
         }
@@ -257,13 +273,16 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public long removingInTheEnd(int amountOfOperations, List<Character> list, long startTime) {
+    public long removingInTheEnd(int amountOfOperations, List<Character> list) {
+        long startTime = System.currentTimeMillis();
+
         for (int i = 0; i < amountOfOperations; i++) {
             list.remove(list.size() - 1);
         }
 
         return System.currentTimeMillis() - startTime;
     }
+
 
     private List<Character> arrayListCreation(int amountOfOperations) {
         return new ArrayList<>(Collections.nCopies(amountOfOperations, charToAction));

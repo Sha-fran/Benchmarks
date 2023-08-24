@@ -61,10 +61,10 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         binding.textInputLayoutCollections.setOnClickListener(this);
         binding.rvFrCollections.setAdapter(adapter);
         binding.rvFrCollections.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
-        adapter.submitList(createBenchmarkItems(initialStartTime, false));
+        adapter.submitList(createBenchmarkItems(false));
     }
 
-    private List<DataBox> createBenchmarkItems(long time, boolean showProgress) {
+    private List<DataBox> createBenchmarkItems(boolean showProgress) {
         final List<DataBox> list = new ArrayList<>();
 
         final int[] textArrayMaps = {
@@ -90,7 +90,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         } else if (view == binding.buttonStartStopFragmentsCollections) {
             if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
                 initialStartTime = System.currentTimeMillis();
-                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()), initialStartTime);
+                calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             } else {
                 long stoppedTime = System.currentTimeMillis() - initialStartTime;
@@ -110,8 +110,8 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         }
     }
 
-    public void calculations(int amountOfCalculation, long startTime) {
-        final List<DataBox> benchmarkItems = createBenchmarkItems(startTime, true);
+    public void calculations(int amountOfCalculation) {
+        final List<DataBox> benchmarkItems = createBenchmarkItems(true);
         adapter.submitList(new ArrayList<>(benchmarkItems));
         pool = Executors.newFixedThreadPool(NUMBER_OF_CORES);
 
@@ -119,7 +119,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation, startTime));
+                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -130,26 +130,28 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         pool.shutdown();
     }
 
-    public long measure(int itemText, int amountOfCalculation, long startTime) {
+    public long measure(int itemText, int amountOfCalculation) {
         if (itemText == R.string.adding_new_in_treemap) {
-            return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+            return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText == R.string.search_by_key_in_treemap) {
-            return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+            return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_from_treemap) {
-            return removing(amountOfCalculation, treeMapCreation(amountOfCalculation), startTime);
+            return removing(amountOfCalculation, treeMapCreation(amountOfCalculation));
         } else if (itemText == R.string.adding_new_in_hashmap) {
-            return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
+            return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation));
         } else if (itemText == R.string.search_by_key_in_hashmap) {
-            return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
+            return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation));
         } else if (itemText == R.string.removing_from_hashmap) {
-            return removing(amountOfCalculation, hashMapCreation(amountOfCalculation), startTime);
+            return removing(amountOfCalculation, hashMapCreation(amountOfCalculation));
         }
 
         return 0;
     }
 
     @Override
-    public long addingNew(int amountOfOperations, Map<Integer, Character> map, long startTime) {
+    public long addingNew(int amountOfOperations, Map<Integer, Character> map) {
+        long startTime = System.currentTimeMillis();
+
         for (int i = 0; i < amountOfOperations; i++) {
             map.put(i, 'a');
         }
@@ -157,20 +159,25 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
     }
 
     @Override
-    public long searchByKey(int amountOfOperations, Map<Integer, Character> map, long startTime) {
+    public long searchByKey(int amountOfOperations, Map<Integer, Character> map) {
+        long startTime = System.currentTimeMillis();
+
         map.get(amountOfOperations - 1);
 
         return System.currentTimeMillis() - startTime;
     }
 
     @Override
-    public long removing(int amountOfOperations, Map<Integer, Character> map, long startTime) {
+    public long removing(int amountOfOperations, Map<Integer, Character> map) {
+        long startTime = System.currentTimeMillis();
+
         for (int i = 0; i < amountOfOperations; i++) {
             map.remove(i);
         }
 
         return System.currentTimeMillis() - startTime;
     }
+
 
     private TreeMap<Integer, Character> treeMapCreation(int amountOfOperations) {
         TreeMap<Integer, Character> treeMap = new TreeMap<>();
