@@ -2,7 +2,6 @@ package com.example.task3_benchmarks.ui.input;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -29,7 +28,7 @@ public class EditDataDialogFragment extends DialogFragment implements View.OnCli
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle saveInstanceState) {
-       Dialog dialog = new Dialog(getContext());
+       final Dialog dialog = new Dialog(getContext());
        binding = FragmentInputBinding.inflate(getLayoutInflater(),null, false);
 
        dialog.setContentView(binding.getRoot());

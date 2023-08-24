@@ -23,7 +23,6 @@
         app:layout_constraintHeight_percent="0.87"
         tools:text="adding in the beginning of ArrayList" />
 
-
         <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_circular_bar"
         android:layout_width="wrap_content"

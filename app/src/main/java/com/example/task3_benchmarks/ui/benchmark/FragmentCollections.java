@@ -47,8 +47,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         getChildFragmentManager().setFragmentResultListener(ENTER_AMOUNT_OF_OPERATIONS,
-                this,
-                (requestKey, result) -> binding.textInputLayoutCollections.setText(
+                this, (requestKey, result) -> binding.textInputLayoutCollections.setText(
                         Integer.toString(result.getInt(RESULT_OF_AMOUNT_OF_OPERATIONS))
                 )
         );

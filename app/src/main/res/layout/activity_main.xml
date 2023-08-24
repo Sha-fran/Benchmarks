@@ -14,9 +14,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="1">
-
-    </com.google.android.material.tabs.TabLayout>
+        app:layout_constraintWidth_percent="1" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager2"
