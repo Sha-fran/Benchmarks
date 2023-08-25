@@ -59,24 +59,13 @@ public class BenchmarksAdapter extends ListAdapter<DataBox, BenchmarksAdapter.Be
             binding.dataBoxView.setText(item.text);
 
             if (item.progressVisible) {
-                binding.progressCircularBar.animate().alpha(1).setDuration(500).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
+                binding.progressCircularBar.animate().alpha(1).setDuration(500);
+                binding.progressCircularBar.setVisibility(View.VISIBLE);
 
-                        binding.progressCircularBar.setVisibility(View.VISIBLE);
-                    }
-                });
             } else if (item.time >= 0) {
-                binding.progressCircularBar.animate().alpha(0).setDuration(500).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-
-                        binding.dataBoxView.setText(String.valueOf(item.time));
-                        binding.progressCircularBar.setVisibility(View.INVISIBLE);
-                    }
-                });
+                binding.progressCircularBar.animate().alpha(0).setDuration(500);
+                binding.dataBoxView.setText(String.valueOf(item.time));
+                binding.progressCircularBar.setVisibility(View.INVISIBLE);
             }
         }
     }

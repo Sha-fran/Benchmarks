@@ -8,7 +8,7 @@ public class DataBox {
     public final long time;
     public final boolean progressVisible;
 
-    public DataBox(int text, int time, boolean progressVisible) {
+    public DataBox(int text, long time, boolean progressVisible) {
         this.text = text;
         this.time = time;
         this.progressVisible = progressVisible;

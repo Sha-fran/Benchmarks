@@ -139,7 +139,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
+                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -150,48 +150,48 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         pool.shutdown();
     }
 
-    public long measure(int itemText, int amountOfCalculation) {
-        if (itemText == R.string.adding_in_the_beginning_of_arrayList) {
+    public long measure(DataBox item, int amountOfCalculation) {
+        if (item.text == R.string.adding_in_the_beginning_of_arrayList) {
             return addingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_middle_of_arrayList) {
+        } else if (item.text == R.string.adding_in_the_middle_of_arrayList) {
             return addingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_end_of_arrayList) {
+        } else if (item.text == R.string.adding_in_the_end_of_arrayList) {
             return addingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.search_by_value_from_arrayList) {
+        } else if (item.text == R.string.search_by_value_from_arrayList) {
             return searchByValue(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_beginning_of_arrayList) {
+        } else if (item.text == R.string.removing_in_the_beginning_of_arrayList) {
             return removingInTheBeginning(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_middle_of_arrayList) {
+        } else if (item.text == R.string.removing_in_the_middle_of_arrayList) {
             return removingInTheMiddle(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_end_of_arrayList) {
+        } else if (item.text == R.string.removing_in_the_end_of_arrayList) {
             return removingInTheEnd(amountOfCalculation, arrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_beginning_of_linkedList) {
+        } else if (item.text == R.string.adding_in_the_beginning_of_linkedList) {
             return addingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_middle_of_linkedList) {
+        } else if (item.text == R.string.adding_in_the_middle_of_linkedList) {
             return addingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_end_of_linkedList) {
+        } else if (item.text == R.string.adding_in_the_end_of_linkedList) {
             return addingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.search_by_value_from_linkedList) {
+        } else if (item.text == R.string.search_by_value_from_linkedList) {
             searchByValue(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_beginning_of_linkedlist) {
+        } else if (item.text == R.string.removing_in_the_beginning_of_linkedlist) {
             removingInTheBeginning(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_middle_of_linkedlist) {
+        } else if (item.text == R.string.removing_in_the_middle_of_linkedlist) {
             return removingInTheMiddle(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_end_of_linkedlist) {
+        } else if (item.text == R.string.removing_in_the_end_of_linkedlist) {
             return removingInTheEnd(amountOfCalculation, linkedListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_beginning_of_copyrightableList) {
+        } else if (item.text == R.string.adding_in_the_beginning_of_copyrightableList) {
             return addingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_middle_of_copyrightableList) {
+        } else if (item.text == R.string.adding_in_the_middle_of_copyrightableList) {
             return addingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_in_the_end_of_copyrightableList) {
+        } else if (item.text == R.string.adding_in_the_end_of_copyrightableList) {
             return addingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.search_by_value_from_copyrightableList) {
+        } else if (item.text == R.string.search_by_value_from_copyrightableList) {
             return searchByValue(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_beginning_of_copyrightableList) {
+        } else if (item.text == R.string.removing_in_the_beginning_of_copyrightableList) {
             return removingInTheBeginning(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_middle_of_copyrightableList) {
+        } else if (item.text == R.string.removing_in_the_middle_of_copyrightableList) {
             return removingInTheMiddle(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_in_the_end_of_copyrightableList) {
+        } else if (item.text == R.string.removing_in_the_end_of_copyrightableList) {
             return removingInTheEnd(amountOfCalculation, copyOnWriteArrayListCreation(amountOfCalculation));
         }
 
