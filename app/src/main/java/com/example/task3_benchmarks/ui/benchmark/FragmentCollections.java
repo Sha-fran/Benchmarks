@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.task3_benchmarks.R;
-import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
+import com.example.task3_benchmarks.databinding.FragmentOfElementsForCalculationsBinding;
 import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
@@ -31,15 +31,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FragmentCollections extends Fragment implements View.OnClickListener, OperationsCollections {
+public class FragmentCollections extends Fragment implements View.OnClickListener {
 
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private FragmentCollectionsBinding binding;
+    private FragmentOfElementsForCalculationsBinding binding;
     private final char charToAction = 'a';
     private ExecutorService pool;
+    private static final int TIME_BEFORE_THE_START = -1;
     private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
-    private Map<Integer, Long> startTimeMap = new HashMap<>();
 
 
     @Override
@@ -55,7 +55,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentCollectionsBinding.inflate(inflater, container, false);
+        binding = FragmentOfElementsForCalculationsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -99,7 +99,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         };
 
         for (int textArrayCollection : textArrayCollections) {
-            DataBox dataBox = new DataBox(textArrayCollection, -1, showProgress);
+            DataBox dataBox = new DataBox(textArrayCollection, TIME_BEFORE_THE_START, showProgress);
             list.add(dataBox);
         }
 
@@ -118,14 +118,14 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
                 List<DataBox> list = new ArrayList<>(adapter.getCurrentList());
+
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).progressVisible) {
-                        DataBox dataBox = list.get(i).copyWithTime((int) list.get(i).time);
-//                        DataBox dataBox = new DataBox(list.get(i).text, (int) list.get(i).time, false);
+                        DataBox dataBox = list.get(i).copyWithTime(list.get(i).time);
                         list.set(i, dataBox);
                     }
                 }
-                adapter.submitList(list);
+                adapter.submitList(new ArrayList<>(list));
             }
         }
     }
@@ -139,7 +139,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
+                DataBox dataBox = item.copyWithTime(measure(item, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -148,6 +148,7 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
             });
         }
         pool.shutdown();
+        binding.buttonStartStopFragmentsCollections.setText(R.string.start);
     }
 
     public long measure(DataBox item, int amountOfCalculation) {
@@ -198,10 +199,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return 0;
     }
 
-    @Override
     public long addingInTheBeginning(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
-        startTimeMap.put(R.string.adding_in_the_beginning_of_arrayList, startTime);
 
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(charToAction);
@@ -210,10 +209,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long addingInTheMiddle(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
-        startTimeMap.put(R.string.adding_in_the_middle_of_arrayList, startTime);
 
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(list.size() / 2, charToAction);
@@ -222,10 +219,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long addingInTheEnd(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
-        startTimeMap.put(R.string.adding_in_the_end_of_arrayList, startTime);
 
         for (int i = 0; i < amountOfOperations; i++) {
             list.add(list.size() - 1, charToAction);
@@ -234,10 +229,8 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long searchByValue(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
-        startTimeMap.put(R.string.search_by_value_from_arrayList, startTime);
 
         for (int i = 0; i < amountOfOperations; i++) {
             char charToSearch = 'b';
@@ -249,7 +242,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long removingInTheBeginning(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
@@ -260,7 +252,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long removingInTheMiddle(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 
@@ -271,7 +262,6 @@ public class FragmentCollections extends Fragment implements View.OnClickListene
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long removingInTheEnd(int amountOfOperations, List<Character> list) {
         long startTime = System.currentTimeMillis();
 

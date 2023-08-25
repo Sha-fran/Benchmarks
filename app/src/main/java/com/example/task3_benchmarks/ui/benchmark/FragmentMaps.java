@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.task3_benchmarks.R;
-import com.example.task3_benchmarks.databinding.FragmentCollectionsBinding;
+import com.example.task3_benchmarks.databinding.FragmentOfElementsForCalculationsBinding;
 import com.example.task3_benchmarks.models.DataBox;
 import com.example.task3_benchmarks.ui.input.EditDataDialogFragment;
 
@@ -29,13 +29,13 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FragmentMaps extends Fragment implements View.OnClickListener, OperationsMaps {
+public class FragmentMaps extends Fragment implements View.OnClickListener {
     private final BenchmarksAdapter adapter = new BenchmarksAdapter();
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private FragmentCollectionsBinding binding;
+    private FragmentOfElementsForCalculationsBinding binding;
     private ExecutorService pool;
+    private static final int TIME_BEFORE_THE_START = -1;
     private static final int NUMBER_OF_CORES = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
-    private long initialStartTime = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentCollectionsBinding.inflate(inflater, container, false);
+        binding = FragmentOfElementsForCalculationsBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -77,7 +77,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         };
 
         for (int textArrayMap : textArrayMaps) {
-            DataBox dataBox = new DataBox(textArrayMap, -1, showProgress);
+            DataBox dataBox = new DataBox(textArrayMap, TIME_BEFORE_THE_START, showProgress);
             list.add(dataBox);
         }
         return list;
@@ -89,23 +89,22 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
             EditDataDialogFragment.newInstance().show(getChildFragmentManager(), EditDataDialogFragment.TAG);
         } else if (view == binding.buttonStartStopFragmentsCollections) {
             if (binding.buttonStartStopFragmentsCollections.getText().toString().equals(getString(R.string.ON))) {
-                initialStartTime = System.currentTimeMillis();
                 calculations(Integer.parseInt(binding.textInputLayoutCollections.getText().toString()));
                 binding.buttonStartStopFragmentsCollections.setText(R.string.stop);
             } else {
-                long stoppedTime = System.currentTimeMillis() - initialStartTime;
-                List<DataBox> items = new ArrayList<>(adapter.getCurrentList());
-
-                for (int i = 0; i < items.size(); i++) {
-                    if (items.get(i).progressVisible) {
-                        items.set(i, items.get(i).copyWithTime((int) stoppedTime));
-                    }
-                }
-
                 pool.shutdownNow();
                 pool = null;
                 binding.buttonStartStopFragmentsCollections.setText(R.string.start);
-                adapter.submitList(new ArrayList<>(items));
+                List<DataBox> list = new ArrayList<>(adapter.getCurrentList());
+
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).progressVisible) {
+                        DataBox dataBox = list.get(i).copyWithTime(list.get(i).time);
+                        list.set(i, dataBox);
+                    }
+                }
+
+                adapter.submitList(new ArrayList<>(list));
             }
         }
     }
@@ -119,7 +118,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
+                DataBox dataBox = item.copyWithTime(measure(item, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -148,7 +147,6 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return 0;
     }
 
-    @Override
     public long addingNew(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
@@ -158,7 +156,6 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long searchByKey(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
@@ -167,7 +164,6 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         return System.currentTimeMillis() - startTime;
     }
 
-    @Override
     public long removing(int amountOfOperations, Map<Integer, Character> map) {
         long startTime = System.currentTimeMillis();
 
