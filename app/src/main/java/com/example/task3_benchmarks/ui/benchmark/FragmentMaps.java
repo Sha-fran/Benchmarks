@@ -119,7 +119,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
             final int index = i;
             final DataBox item = benchmarkItems.get(index);
             pool.submit(() -> {
-                DataBox dataBox = item.copyWithTime((int) measure(item.text, amountOfCalculation));
+                DataBox dataBox = item.copyWithTime((int) measure(item, amountOfCalculation));
                 benchmarkItems.set(index, dataBox);
                 handler.post(() -> {
                     Log.d("LOGG", "Item update " + index);
@@ -130,18 +130,18 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Oper
         pool.shutdown();
     }
 
-    public long measure(int itemText, int amountOfCalculation) {
-        if (itemText == R.string.adding_new_in_treemap) {
+    public long measure(DataBox item, int amountOfCalculation) {
+        if (item.text == R.string.adding_new_in_treemap) {
             return addingNew(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText == R.string.search_by_key_in_treemap) {
+        } else if (item.text == R.string.search_by_key_in_treemap) {
             return searchByKey(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_from_treemap) {
+        } else if (item.text == R.string.removing_from_treemap) {
             return removing(amountOfCalculation, treeMapCreation(amountOfCalculation));
-        } else if (itemText == R.string.adding_new_in_hashmap) {
+        } else if (item.text == R.string.adding_new_in_hashmap) {
             return addingNew(amountOfCalculation, hashMapCreation(amountOfCalculation));
-        } else if (itemText == R.string.search_by_key_in_hashmap) {
+        } else if (item.text == R.string.search_by_key_in_hashmap) {
             return searchByKey(amountOfCalculation, hashMapCreation(amountOfCalculation));
-        } else if (itemText == R.string.removing_from_hashmap) {
+        } else if (item.text == R.string.removing_from_hashmap) {
             return removing(amountOfCalculation, hashMapCreation(amountOfCalculation));
         }
 
